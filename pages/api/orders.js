@@ -5,7 +5,13 @@ import { ObjectId } from "mongodb";
 export default async function handler(req, res) {
     await mongooseConnect();
 
-    if (req.method == 'PUT') {
+    if (req.method === 'PUT' && req.query.paid){
+        console.log("i'm here", req.query);
+        res.json(await Order.findByIdAndUpdate(req.query._id, {
+            paid: req.query.paid
+        }));
+    }
+    else if (req.method == 'PUT') {
         res.json(await Order.findByIdAndUpdate(req.body._id, {
             line_items: req.body.lineItems
         }));
@@ -47,7 +53,6 @@ export default async function handler(req, res) {
                 }
             }
         ])
-        console.log("pedidos: ", JSON.stringify( results));
         res.json(results);
     } 
 }

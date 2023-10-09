@@ -18,7 +18,6 @@ export default function EditOrderPage() {
         });
     }, [id]);
 
-    console.log("orderInfo after: " + JSON.stringify(orderInfo));
 
     return (
         <Layout>

@@ -58,12 +58,10 @@ export default function OrderForm({
     }
 
     function removeItem(item) {
-        console.log("Removing item", item);
         const newLineItems = lineItems.filter((li) => {
             return li.price_data.product_data.name !== item;
         });
         setLineItems(newLineItems);
-        console.log("Removed", lineItems);
     }
 
     async function saveOrder(ev) {

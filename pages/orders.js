@@ -10,10 +10,9 @@ export default function OrdersPage() {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
 
-
     useEffect(() => {
         var date = new Date() - 3;
-        axios.get('/api/orders?filterDate='+date).then(response => {
+        axios.get('/api/orders?filterDate=' + date).then(response => {
             setOrders(response.data);
         });
     }, []);
@@ -32,13 +31,26 @@ export default function OrdersPage() {
     }, [startDate]);
 
     function removeOrder(orderId) {
-        console.log('Rem', orderId);
         axios.delete("/api/orders?_id=" + orderId)
             .then(result => {
                 setFilteredOrders((order) => {
                     order.filter((i) => i._id !== orderId)
                 });
             });
+    }
+
+    function pay(orderId, paid) {
+        console.log(orderId);
+        axios.put("/api/orders?_id=" + orderId + "&paid=" + paid)
+            .then(result => {
+                const alteredFilteredOrders = [...filteredOrders];
+
+                let order = alteredFilteredOrders.find(
+                    a => a._id === orderId
+                );
+                order.paid = paid;
+                setFilteredOrders(alteredFilteredOrders);
+            })
     }
 
     return (
@@ -51,7 +63,7 @@ export default function OrdersPage() {
                         selected={startDate}
                         onChange={(date) => {
                             date.setHours(0, 0, 0, 0);
-                            setStartDate(date);                    
+                            setStartDate(date);
                         }}
                     />
                 </div>
@@ -61,7 +73,7 @@ export default function OrdersPage() {
                         selected={endDate}
                         onChange={(date) => {
                             date.setHours(0, 0, 0, 0);
-                            setEndDate(date);                    
+                            setEndDate(date);
                         }}
                     />
                 </div>
@@ -73,7 +85,7 @@ export default function OrdersPage() {
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                {/*<th>Paid</th>*/}
+                                {<th>Paid</th>}
                                 <th>Recipient</th>
                                 <th>Products</th>
                             </tr>
@@ -85,11 +97,11 @@ export default function OrdersPage() {
                                         {new Date(order.createdAt).toLocaleString()}
                                         <button type="button" className="btn-default" onClick={ev => removeOrder(order._id)}>Remove</button>
                                     </td>
-                                    {/*{
-                            <td className={order.paid ? 'text-green-600' : 'text-red-600'}>
-                                {order.paid ? 'YES' : 'NO'}
-                                </td>
-                            */}
+                                    {
+                                        <td className={order.paid ? 'text-green-600' : 'text-red-600'}>
+                                            <button onClick={ev => pay(order._id, !order.paid)}>{order.paid ? 'YES' : 'NO'}</button>
+                                        </td>
+                                    }
                                     <td>
                                         <b>{order.name}</b> {order.email} <br></br>
                                         {orders.city != null ?
