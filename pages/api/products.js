@@ -12,7 +12,9 @@ export default async function handle(req, res) {
             res.json(await Product.findOne({ _id: req.query.id }));
         }
         else {
-            res.json(await Product.find())
+            res.json(await Product.find()
+                .sort({ title: 0 })
+            )
         }
     }
 
@@ -25,14 +27,14 @@ export default async function handle(req, res) {
     }
 
     if (method === 'PUT') {
-        const {title, description, price, images, category, properties, stock, _id} = req.body;
-        await Product.updateOne({_id}, {title, description, price, images, category, properties, stock});
+        const { title, description, price, images, category, properties, stock, _id } = req.body;
+        await Product.updateOne({ _id }, { title, description, price, images, category, properties, stock });
         res.json(true);
     }
 
-    if(method === 'DELETE'){
+    if (method === 'DELETE') {
         if (req.query?.id) {
-            await Product.deleteOne({_id:req.query?.id});
+            await Product.deleteOne({ _id: req.query?.id });
             res.json(true);
         }
     }

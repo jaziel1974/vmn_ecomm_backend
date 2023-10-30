@@ -12,9 +12,9 @@ export default function OrdersToPrint() {
             {ordersToPrint.length > 0 && ordersToPrint.map(order => (
                 <div key={order.id} style={{width: "5cm"}}>
                     <div>
-                        <b>{order.Customers[0].name}</b><br></br>
-                        {order.Customers[0].address}<br></br>
-                        {order.Customers[0].addressExt}<br></br>
+                        <b>{order.Customers[0]?.name}</b><br></br>
+                        {order.Customers[0]?.address}<br></br>
+                        {order.Customers[0]?.addressExt}<br></br>
                     </div>
                     <div>
                         {order.line_items.map(l => (

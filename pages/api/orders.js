@@ -5,10 +5,15 @@ import { ObjectId } from "mongodb";
 export default async function handler(req, res) {
     await mongooseConnect();
 
-    if (req.method === 'PUT' && req.query.paid){
-        console.log("i'm here", req.query);
+    if (req.method === 'PUT' && req.query.paid) {
         res.json(await Order.findByIdAndUpdate(req.query._id, {
             paid: req.query.paid
+        }));
+    }
+    else if (req.method == 'PUT' && req.query.normalization) {
+        console.log(req.body, req.query._id);
+        res.json(await Order.findByIdAndUpdate(req.query._id, {
+            line_items: req.body
         }));
     }
     else if (req.method == 'PUT') {
@@ -17,7 +22,7 @@ export default async function handler(req, res) {
         }));
     } else if (req.method == 'DELETE') {
         const { _id } = req.query;
-        res.json(await Order.deleteOne( {_id} ));
+        res.json(await Order.deleteOne({ _id }));
     } else if (req.query?.id) {
         const data = await Order.findOne({ _id: req.query.id });
         res.json(data);
@@ -35,12 +40,11 @@ export default async function handler(req, res) {
         ])
         res.json(results);
     } else if (req.query.filterDate) {
-        //ISODate('2023-01-01')
         const results = await Order.aggregate([
             {
                 $match: {
                     createdAt: {
-                        $gt: new Date('2023-10-07')
+                        $gt: new Date(req.query.filterDate)
                     }
                 }
             },
@@ -54,5 +58,5 @@ export default async function handler(req, res) {
             }
         ])
         res.json(results);
-    } 
+    }
 }

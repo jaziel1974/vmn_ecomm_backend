@@ -7,12 +7,11 @@ import DatePicker from "react-datepicker";
 export default function OrdersPage() {
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
-    const [startDate, setStartDate] = useState(new Date());
+    const [startDate, setStartDate] = useState(new Date() - (6 - new Date().getDay()));
     const [endDate, setEndDate] = useState(new Date());
 
     useEffect(() => {
-        var date = new Date() - 3;
-        axios.get('/api/orders?filterDate=' + date).then(response => {
+        axios.get('/api/orders?filterDate=' + startDate).then(response => {
             setOrders(response.data);
         });
     }, []);
@@ -26,6 +25,7 @@ export default function OrdersPage() {
                         return orderDate.getTime() >= startDate.getTime() && orderDate.getTime() <= endDate.getTime();
                     })
             );
+
             localStorage.setItem('OrdersToPrint', JSON.stringify(filteredOrders));
         };
     }, [startDate]);
@@ -40,7 +40,6 @@ export default function OrdersPage() {
     }
 
     function pay(orderId, paid) {
-        console.log(orderId);
         axios.put("/api/orders?_id=" + orderId + "&paid=" + paid)
             .then(result => {
                 const alteredFilteredOrders = [...filteredOrders];
@@ -51,6 +50,34 @@ export default function OrdersPage() {
                 order.paid = paid;
                 setFilteredOrders(alteredFilteredOrders);
             })
+    }
+
+    /*
+    function fixOrder(order) {
+        var items = [];
+        let item = {};
+
+        order.line_items.map(l => (
+            items.push({
+                "quantity": l.quantity, "name": l.price_data.product_data.name, "price": l.price_data.unit_amount
+            }
+            )
+        ))
+        console.log(order);
+
+        axios.put("/api/orders?_id=" + order._id + "&normalization=true", items)
+            .then(result => {
+                console.log("updated");
+            });
+    }
+    */
+
+    function getLastSaturday(date) {
+        // Copy date so don't modify original
+        let d = new Date(date);
+        // Adjust to previous Saturday
+        d.setDate(d.getDate() - (d.getDay() + 1));
+        return d;
     }
 
     return (
@@ -111,7 +138,7 @@ export default function OrdersPage() {
                                     <td>
                                         {order.line_items.map(l => (
                                             <>
-                                                {l.quantity} {l.price_data.product_data.name}<br></br>
+                                                {l.quantity} {l.name}<br></br>
                                             </>
                                         ))}
                                         <Link className="btn-default" href={{
