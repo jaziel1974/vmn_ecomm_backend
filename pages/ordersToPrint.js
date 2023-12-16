@@ -19,7 +19,7 @@ export default function OrdersToPrint() {
                     <div>
                         {order.line_items.map(l => (
                             <div>
-                                {l.quantity} {l.price_data.product_data.name}
+                                {l.quantity} {l.name}
                             </div>
                         ))}
                     </div>

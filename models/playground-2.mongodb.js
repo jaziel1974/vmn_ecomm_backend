@@ -11,6 +11,7 @@ db.getCollection('customers').insertOne({
 });
 */
 
+/*
 db.getCollection('orders').find({},
     {
         "streetAddress": 1,
@@ -21,7 +22,14 @@ db.getCollection('orders').find({},
         "postalCode": 1,
     }
 ).skip(100).sort({"name":1})
+*/
 
+/*
 db.getCollection('customers').insertMany(
     {}
-)
+    */
+
+/*
+*/
+db.getCollection('orders').find().sort({createdAt: -1})
+

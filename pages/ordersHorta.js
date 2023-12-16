@@ -55,7 +55,7 @@ export default function OrdersPage() {
                                 {l.quantity}
                             </td>
                             <td>
-                                {l.price_data.product_data.name}
+                                {l.name}
                             </td>
                         </tr>
                     ))

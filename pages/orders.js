@@ -53,6 +53,7 @@ export default function OrdersPage() {
     }
 
     /*
+    */
     function fixOrder(order) {
         var items = [];
         let item = {};
@@ -70,7 +71,6 @@ export default function OrdersPage() {
                 console.log("updated");
             });
     }
-    */
 
     function getLastSaturday(date) {
         // Copy date so don't modify original
@@ -153,6 +153,7 @@ export default function OrdersPage() {
                                             Edit
                                         </Link>
                                     </td>
+                                    <button type="button" className="btn-default" onClick={ev => fixOrder(order)}>Fix products</button>
                                 </tr>
                             ))}
                         </tbody>
