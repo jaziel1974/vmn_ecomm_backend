@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 img{
     max-height: 100%;
 }
@@ -59,7 +60,6 @@ table.basic a{
     grid-gap: 0.5cm;
     grid-auto-flow: row;
 }
-
 .grid-wrap, grid-container-A4 {
     width: 22cm;
 }
@@ -70,7 +70,27 @@ table.basic a{
 .flex-child-left{
     width: 80%;
 }
-
 .flex-child-rigth{
     width: 20%;
+}
+
+.A4 {
+        height: 29.7cm;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        column-gap: 20px;
+        row-gap: 40px;
+        flex-wrap: wrap;
+        min-width: 0;
+}
+
+.orderToPrint{
+    width: 5.5cm;
+}
+
+@page {
+    size: A4;
+    margin: 20;
 }

@@ -5,16 +5,17 @@ import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 export default function OrdersPage() {
-    const [orders, setOrders] = useState([]);
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    const [startDate, setStartDate] = useState(new Date() - (6 - new Date().getDay()));
+    const [startDate, setStartDate] = useState(addDays(new Date(), -7));
     const [endDate, setEndDate] = useState(new Date());
+    const [orders, setOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState(orders);
+    const [firstArrive, setFirstArrive] = useState(true);
 
     useEffect(() => {
         axios.get('/api/orders?filterDate=' + startDate).then(response => {
             setOrders(response.data);
         });
-    }, []);
+    }, [firstArrive]);
 
     useEffect(() => {
         if (startDate && endDate && orders) {
@@ -28,7 +29,13 @@ export default function OrdersPage() {
 
             localStorage.setItem('OrdersToPrint', JSON.stringify(filteredOrders));
         };
-    }, [startDate]);
+    }, [startDate, endDate]);
+
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
 
     function removeOrder(orderId) {
         axios.delete("/api/orders?_id=" + orderId)
@@ -70,14 +77,6 @@ export default function OrdersPage() {
             .then(result => {
                 console.log("updated");
             });
-    }
-
-    function getLastSaturday(date) {
-        // Copy date so don't modify original
-        let d = new Date(date);
-        // Adjust to previous Saturday
-        d.setDate(d.getDate() - (d.getDay() + 1));
-        return d;
     }
 
     return (

@@ -35,13 +35,9 @@ export default function OrderForm({
         if (qtd > 0 && product && price) {
             let newLine = {
                 quantity: qtd,
-                price_data: {
-                    currency: "USD",
-                    product_data: {
-                        name: product
-                    },
-                    unit_amount: price
-                }
+                currency: "USD",
+                name: product,
+                unit_amount: price
             }
 
             if (!lineItems.includes(newLine)) {
@@ -59,7 +55,7 @@ export default function OrderForm({
 
     function removeItem(item) {
         const newLineItems = lineItems.filter((li) => {
-            return li.price_data.product_data.name !== item;
+            return li.name !== item;
         });
         setLineItems(newLineItems);
     }
@@ -97,16 +93,16 @@ export default function OrderForm({
                             </td>
                             <td>
                                 <>
-                                    {l.price_data.product_data.name}
+                                    {l.name}
                                 </>
                             </td>
                             <td>
                                 <>
-                                    {l.price_data.unit_amount / 100}
+                                    {l.unit_amount / 100}
                                 </>
                             </td>
                             <td>
-                                <button type="button" className="btn-default" onClick={ev => removeItem(l.price_data.product_data.name)}>Remove</button>
+                                <button type="button" className="btn-default" onClick={ev => removeItem(l.name)}>Remove</button>
                             </td>
                         </tr>
                     ))}
@@ -125,7 +121,7 @@ export default function OrderForm({
                         <td>
                             <input type="text" placeholder="Price" value="7.00" onChange={ev => setPrice(ev.target.value)}></input>
                         </td>
-                            <button type="button" className="btn-default" onClick={ev => addItem()}>Add</button>
+                        <button type="button" className="btn-default" onClick={ev => addItem()}>Add</button>
                         <td>
                         </td>
                     </tr>

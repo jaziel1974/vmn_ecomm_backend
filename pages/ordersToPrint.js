@@ -8,9 +8,9 @@ export default function OrdersToPrint() {
     }, []);
 
     return (
-        <div style={{display: "flex", "flex-wrap": "wrap", "grid-gap": "0.5cm", width: "22cm"}}>
+        <container className="A4">
             {ordersToPrint.length > 0 && ordersToPrint.map(order => (
-                <div key={order.id} style={{width: "5cm"}}>
+                <div key={order.id} className="orderToPrint">
                     <div>
                         <b>{order.Customers[0]?.name}</b><br></br>
                         {order.Customers[0]?.address}<br></br>
@@ -25,6 +25,6 @@ export default function OrdersToPrint() {
                     </div>
                 </div>
             ))}
-        </div>
+        </container>
     )
 }
