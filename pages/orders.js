@@ -3,7 +3,6 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-import receiptsPdf from "./reports/orders/receipts";
 
 export default function OrdersPage() {
     const [startDate, setStartDate] = useState(addDays(new Date(), -7));
