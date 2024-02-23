@@ -103,13 +103,7 @@ export default function OrdersPage() {
                         }}
                     />
                 </div>
-                <Link className="btn-default" href="./reports/orders/ordersToPrint" target="_blank" state={orders}>Print</Link>
-                <button
-                    onClick={(e) => receiptsPdf(filteredOrders)}
-                    type="button"
-                    className="btn-default text-sm mb-2">
-                    Generate report
-                </button>
+                <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrint" target="_blank" state={orders}>Print</Link>
             </div>
             <container className="grid-wrap">
                 <div>

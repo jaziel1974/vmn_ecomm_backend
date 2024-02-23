@@ -1,3 +1,4 @@
+/*
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -25,7 +26,6 @@ function receiptsPdf(orders) {
     }];
     const footer = [];
 
-    /*
     const docDefinitions = {
         pageSize: 'A4',
         pageMargins: [15, 50, 15, 40],
@@ -34,23 +34,9 @@ function receiptsPdf(orders) {
         content: [details],
         footer: [footer]
     };
-    */
-
-    var docDefinitions = {
-        content: [
-            {
-                table: {
-                    dontBreakRows: true,
-                    widths: ['50%', '30%', '20%', '*', '*', '*', '*', '*', '*', '*', '*'],
-                    body: [
-                        ['Column 1', 'Column 2', 'Column 3', 'Column 3', 'Column 3', 'Column 3', 'Column 3', 'Column 3', 'Column 3', 'Column 3', 'Column 3'],
-                    ]
-                }
-            }
-        ]
-    };
 
     pdfMake.createPdf(docDefinitions).open();
 }
 
 export default receiptsPdf;
+*/

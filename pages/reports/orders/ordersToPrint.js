@@ -3,12 +3,6 @@ import React, { useEffect, useState } from "react";
 export default function OrdersToPrint() {
     const [ordersToPrint, setOrdersToPrint] = useState([]);
 
-    const visualizarImpressao = () => {
-        const classeImpressao = Impressao(ordersToPrint);
-        const documento = classeImpressao.gerarDocumento();
-        pdfMake.createPdf(documento).open({}, window.open('', '_blank'));
-    }
-
     useEffect(() => {
         setOrdersToPrint(JSON.parse(localStorage.getItem('OrdersToPrint')));
     }, []);
