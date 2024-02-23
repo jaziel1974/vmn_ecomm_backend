@@ -7,6 +7,16 @@ export default function OrdersToPrint() {
         setOrdersToPrint(JSON.parse(localStorage.getItem('OrdersToPrint')));
     }, []);
 
+    var totalCost = 0.0;
+    function calculateTotalCost(price) {
+        totalCost += price;
+    }
+    function useTotalCost(){
+        var result = totalCost;
+        totalCost = 0.0;
+        return result;
+    }
+
     return (
         <container className="A4">
             {ordersToPrint.length > 0 && ordersToPrint.map(order => (
@@ -16,14 +26,19 @@ export default function OrdersToPrint() {
                         <hr style={{height: '5px', color: 'black'}}/>
                         {order.Customers[0]?.address}<br></br>
                         {order.Customers[0]?.addressExt}
-                        <hr style={{height: '5px', color: 'black'}}/>
                     </div>
+                    <hr style={{height: '5px', color: 'black'}}/>
                     <div>
                         {order.line_items.map(l => (
+                            calculateTotalCost(l.unit_amount),
                             <div>
-                                {l.quantity} {l.name} - {l.unit_amount/100}
+                                {l.quantity} {l.name} - {l.unit_amount}
                             </div>
                         ))}
+                    </div>
+                    <hr style={{height: '5px', color: 'black'}}/>
+                    <div>
+                        Total: {useTotalCost()}
                     </div>
                 </div>
             ))}
