@@ -11,7 +11,6 @@ export default async function handler(req, res) {
         }));
     }
     else if (req.method == 'PUT' && req.query.normalization) {
-        console.log(req.body, req.query._id);
         res.json(await Order.findByIdAndUpdate(req.query._id, {
             line_items: req.body
         }));

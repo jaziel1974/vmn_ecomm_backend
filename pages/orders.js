@@ -3,6 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import receiptsPdf from "./reports/orders/receipts";
 
 export default function OrdersPage() {
     const [startDate, setStartDate] = useState(addDays(new Date(), -7));
@@ -71,7 +72,6 @@ export default function OrdersPage() {
             }
             )
         ))
-        console.log(order);
 
         axios.put("/api/orders?_id=" + order._id + "&normalization=true", items)
             .then(result => {
@@ -103,7 +103,13 @@ export default function OrdersPage() {
                         }}
                     />
                 </div>
-                <Link className="btn-default" href="/ordersToPrint" target="_blank" state={orders}>Print</Link>
+                <Link className="btn-default" href="./reports/orders/ordersToPrint" target="_blank" state={orders}>Print</Link>
+                <button
+                    onClick={(e) => receiptsPdf(filteredOrders)}
+                    type="button"
+                    className="btn-default text-sm mb-2">
+                    Generate report
+                </button>
             </div>
             <container className="grid-wrap">
                 <div>

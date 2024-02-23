@@ -14,6 +14,7 @@ export default function ProductForm(
         category: assignedCategory,
         properties: assignedProperties,
         stock: existingStock,
+        pricePerZone: existingPricePerZone,
     }) {
     const [title, setTitle] = useState(existingTitle || '');
     const [description, setDescription] = useState(existingDescription || '');
@@ -25,6 +26,8 @@ export default function ProductForm(
     const [isUploading, setIsUploading] = useState(false);
     const [categories, setCategories] = useState([]);
     const [stock, setStock] = useState(existingStock || 0);
+    const [pricePerZone, setPricePerZone] = useState(existingPricePerZone ||[]);
+
     const router = useRouter();
 
     useEffect(() => {
@@ -35,7 +38,7 @@ export default function ProductForm(
 
     async function saveProduct(ev) {
         ev.preventDefault();
-        const data = { title, description, price, images, category, properties: productProperties, stock };
+        const data = { title, description, price, images, category, properties: productProperties, stock, pricePerZone };
         if (_id) {
             //update
             await axios.put('/api/products', { ...data, _id })
@@ -71,6 +74,8 @@ export default function ProductForm(
         setImages(images);
     }
 
+    console.log('pricePerZone', pricePerZone);
+
     const propertiesToFill = [];
     if (categories.length > 0 && category) {
         let catInfo = categories.find(({ _id }) => _id === category);
@@ -90,6 +95,37 @@ export default function ProductForm(
         });
     }
 
+
+    function addPrice() {
+        setPricePerZone(prev => {
+            return [...prev, { name: '', values: '' }];
+        })
+    }
+
+    function removePrice(indexToRemove) {
+        setPricePerZone(prev => {
+            return [...prev].filter((p, pIndex) => {
+                return pIndex !== indexToRemove;
+            });
+        });
+    }
+
+    function handlePriceNameChange(index, property, newName) {
+        setPricePerZone(prev => {
+            const prices = [...prev];
+            prices[index].name = newName;
+            return prices;
+        });
+    }
+
+    function handlePriceValuesChange(index, property, newValues) {
+        setPricePerZone(prev => {
+            const properties = [...prev];
+            properties[index].values = newValues;
+            return properties;
+        });
+    }
+
     return (
         <form onSubmit={saveProduct}>
             <label>Product name</label>
@@ -106,7 +142,7 @@ export default function ProductForm(
 
             {propertiesToFill.length > 0 && propertiesToFill.map(p => (
                 <div className="">
-                    <label>{p.name[0].toUpperCase()+p.name.substring(1)}</label>
+                    <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
                     <div>
                         <select value={productProperties[p.name]}
                             onChange={ev => setProductProp(p.name, ev.target.value)}>
@@ -149,6 +185,36 @@ export default function ProductForm(
             <input type="number" placeholder="price"
                 value={price} onChange={ev => setPrice(ev.target.value)}>
             </input>
+
+            <div className="mb-2">
+                <label className="block">Prices per zone</label>
+                <button
+                    onClick={addPrice}
+                    type="button"
+                    className="btn-default text-sm mb-2">
+                    Add new price
+                </button>
+                {pricePerZone.length > 0 && pricePerZone.map((price, index) => (
+                    <div className="flex gap-1 mb-2" key={index}>
+                        <input type="text"
+                            value={price.name}
+                            onChange={ev => handlePriceNameChange(index, price, ev.target.value)}
+                            placeholder="price zone"
+                            className="mb-0" />
+                        <input type="text"
+                            value={price.values}
+                            onChange={ev => handlePriceValuesChange(index, price, ev.target.value)}
+                            placeholder="price"
+                            className="mb-0" />
+                        <button
+                            onClick={() => removePrice(index)}
+                            type="button"
+                            className="btn-red">Remove
+                        </button>
+                    </div>
+                ))}
+            </div>
+
             <label>Stock</label>
             <input type="number" placeholder="stock"
                 value={stock} onChange={ev => setStock(ev.target.value)}>

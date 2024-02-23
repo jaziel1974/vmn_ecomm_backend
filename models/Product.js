@@ -8,6 +8,12 @@ const ProductSchema = new Schema({
     category: { type: mongoose.Types.ObjectId, ref: 'Category' },
     properties: { type: Object },
     stock: { type: Number, required: true },
+    pricePerZone: {
+        type: Object, properties: {
+            zone: { type: Number },
+            price: { type: Number },
+        },
+    }
 },
     {
         timestamps: true
