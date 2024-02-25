@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
+import DatePicker from "react-datepicker";
+import { parseISO } from "date-fns";
 
 export default function ProductForm(
     {
@@ -25,8 +27,8 @@ export default function ProductForm(
     const [goToProducts, setGoToProducts] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [categories, setCategories] = useState([]);
-    const [stock, setStock] = useState(existingStock || 0);
-    const [pricePerZone, setPricePerZone] = useState(existingPricePerZone ||[]);
+    const [stock, setStock] = useState(existingStock || []);
+    const [pricePerZone, setPricePerZone] = useState(existingPricePerZone || []);
 
     const router = useRouter();
 
@@ -74,8 +76,6 @@ export default function ProductForm(
         setImages(images);
     }
 
-    console.log('pricePerZone', pricePerZone);
-
     const propertiesToFill = [];
     if (categories.length > 0 && category) {
         let catInfo = categories.find(({ _id }) => _id === category);
@@ -94,7 +94,6 @@ export default function ProductForm(
             return newProductProps;
         });
     }
-
 
     function addPrice() {
         setPricePerZone(prev => {
@@ -122,6 +121,36 @@ export default function ProductForm(
         setPricePerZone(prev => {
             const properties = [...prev];
             properties[index].values = newValues;
+            return properties;
+        });
+    }
+
+    function addStock() {
+        setStock(prev => {
+            return [...prev, { dateIni: '', dateEnd: '' }];
+        })
+    }
+
+    function removeStock(indexToRemove) {
+        setStock(prev => {
+            return [...prev].filter((p, pIndex) => {
+                return pIndex !== indexToRemove;
+            });
+        });
+    }
+
+    function handleStockDateIniChange(index, property, newName) {
+        setStock(prev => {
+            const prices = [...prev];
+            prices[index].dateIni = newName;
+            return prices;
+        });
+    }
+
+    function handleStockDateEndChange(index, property, newValues) {
+        setStock(prev => {
+            const properties = [...prev];
+            properties[index].dateEnd = newValues;
             return properties;
         });
     }
@@ -215,10 +244,39 @@ export default function ProductForm(
                 ))}
             </div>
 
-            <label>Stock</label>
-            <input type="number" placeholder="stock"
-                value={stock} onChange={ev => setStock(ev.target.value)}>
-            </input>
+            <div className="mb-2">
+                <label className="block">Stock</label>
+                <button
+                    onClick={addStock}
+                    type="button"
+                    className="btn-default text-sm mb-2">
+                    Add new stock
+                </button>
+                {stock.length > 0 && stock.map((data, index) => (
+                    <div className="flex gap-1 mb-2" key={index}>
+                        <DatePicker
+                            style={{ marginB    : '0' }}
+                            selected={parseISO(data.dateIni)}
+                            onChange={(date) => {
+                                date.setHours(0, 0, 0, 0);
+                                handleStockDateIniChange(index, data, date);
+                            }}
+                        />
+                        <DatePicker
+                            selected={parseISO(data.dateEnd)}
+                            onChange={(date) => {
+                                date.setHours(0, 0, 0, 0);
+                                handleStockDateEndChange(index, data, date);
+                            }}
+                        />
+                        <button
+                            onClick={() => removeStock(index)}
+                            type="button"
+                            className="btn-red">Remove
+                        </button>
+                    </div>
+                ))}
+            </div>
             <button type="submit" className="btn-primary">Save</button>
         </form >
     )

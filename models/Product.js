@@ -7,7 +7,12 @@ const ProductSchema = new Schema({
     images: { type: [String] },
     category: { type: mongoose.Types.ObjectId, ref: 'Category' },
     properties: { type: Object },
-    stock: { type: Number, required: true },
+    stock: {
+        type: Object, properties: {
+            dateIni: { type: Date },
+            dateEnd: { type: Date },
+        },
+    },
     pricePerZone: {
         type: Object, properties: {
             zone: { type: Number },
