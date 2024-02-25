@@ -31,6 +31,14 @@ export default function OrdersPage() {
         footer = <p> Date selected.</p>
     }
 
+    /*
+    const ordersHortaList = () => {
+        filteredOrders.map(val, index,  => {
+            
+        })
+    } 
+    */  
+
     return (
         <Layout>
             <div class="float-container">
