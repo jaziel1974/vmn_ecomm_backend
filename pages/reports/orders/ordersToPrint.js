@@ -32,13 +32,13 @@ export default function OrdersToPrint() {
                         {order.line_items.map(l => (
                             calculateTotalCost(l.unit_amount),
                             <div>
-                                {l.quantity} {l.name} - {l.unit_amount}
+                                {l.quantity} {l.name} - <b>{l.unit_amount}</b>
                             </div>
                         ))}
                     </div>
                     <hr style={{height: '5px', color: 'black'}}/>
-                    <div>
-                        Total: {useTotalCost()}
+                    <div style={{float: 'right', paddingBottom: '30px'}}>
+                        Total: <b>{useTotalCost()}</b>
                     </div>
                 </div>
             ))}

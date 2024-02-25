@@ -83,8 +83,9 @@ table.basic a{
 }
 
 .orderToPrint{
-    width: 25%;
+    width: 33%;
     page-break-inside: avoid;
+    padding-right: 20px;
 }
 
 @page {
