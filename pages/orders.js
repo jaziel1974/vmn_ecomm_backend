@@ -8,27 +8,11 @@ export default function OrdersPage() {
     const [startDate, setStartDate] = useState(addDays(new Date(), -7));
     const [endDate, setEndDate] = useState(new Date());
     const [orders, setOrders] = useState([]);
-    const [filteredOrders, setFilteredOrders] = useState(orders);
-    const [firstArrive, setFirstArrive] = useState(true);
 
     useEffect(() => {
-        axios.get('/api/orders?filterDate=' + startDate).then(response => {
+        axios.get('/api/orders?filterDateIni=' + startDate+'&filterDateEnd=' + endDate).then(response => {
             setOrders(response.data);
         });
-    }, [firstArrive]);
-
-    useEffect(() => {
-        if (startDate && endDate && orders) {
-            setFilteredOrders(
-                orders.filter(
-                    order => {
-                        const orderDate = new Date(order.createdAt);
-                        return orderDate.getTime() >= startDate.getTime() && orderDate.getTime() <= endDate.getTime();
-                    })
-            );
-
-            localStorage.setItem('OrdersToPrint', JSON.stringify(filteredOrders));
-        };
     }, [startDate, endDate]);
 
     function addDays(date, days) {
@@ -40,7 +24,7 @@ export default function OrdersPage() {
     function removeOrder(orderId) {
         axios.delete("/api/orders?_id=" + orderId)
             .then(result => {
-                setFilteredOrders((order) => {
+                setOrders((order) => {
                     order.filter((i) => i._id !== orderId)
                 });
             });
@@ -49,13 +33,13 @@ export default function OrdersPage() {
     function pay(orderId, paid) {
         axios.put("/api/orders?_id=" + orderId + "&paid=" + paid)
             .then(result => {
-                const alteredFilteredOrders = [...filteredOrders];
+                const alteredFilteredOrders = [...orders];
 
                 let order = alteredFilteredOrders.find(
                     a => a._id === orderId
                 );
                 order.paid = paid;
-                setFilteredOrders(alteredFilteredOrders);
+                setOrders(alteredFilteredOrders);
             })
     }
 
@@ -116,7 +100,7 @@ export default function OrdersPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredOrders.length > 0 && filteredOrders.map(order => (
+                            {orders.length > 0 && orders.map(order => (
                                 <tr key={order._id}>
                                     <td>
                                         {new Date(order.createdAt).toLocaleString()}

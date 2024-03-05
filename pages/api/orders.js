@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     } else if (req.query?.id) {
         const data = await Order.findOne({ _id: req.query.id });
         res.json(data);
-    } else if (!req.query.filterDate) {
+    } else if (!req.query.filterDateIni) {
         //const results = await Order.find().sort({ createdAt: -1 })
         const results = await Order.aggregate([
             {
@@ -37,12 +37,13 @@ export default async function handler(req, res) {
             }
         ])
         res.json(results);
-    } else if (req.query.filterDate) {
+    } else if (req.query.filterDateIni) {
         const results = await Order.aggregate([
             {
                 $match: {
                     createdAt: {
-                        $gt: new Date(req.query.filterDate)
+                        $gt: new Date(req.query.filterDateIni),
+                        $lt: new Date(req.query.filterDateEnd)
                     }
                 }
             },
