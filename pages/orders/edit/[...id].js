@@ -12,7 +12,7 @@ export default function EditOrderPage() {
         if (!id) {
             return;
         }
-        axios.get('/api/orders?id=' + id).then(response => {
+        axios.get('/api/orders?orderEdit=true&id=' + id).then(response => {
             setOrderInfo(response.data);
 
         });
