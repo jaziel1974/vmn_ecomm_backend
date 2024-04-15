@@ -20,6 +20,7 @@ export default function Customers() {
                         <td>Customer name</td>
                         <td>Address</td>
                         <td>E-mail</td>
+                        <td>Price ID</td>
                         <td></td>
                     </tr>
                 </thead>
@@ -29,6 +30,7 @@ export default function Customers() {
                             <td>{customer.name}</td>
                             <td>{customer.address}</td>
                             <td>{customer.email}</td>
+                            <td>{customer.priceId}</td>
                             <td>
                                 <Link className="btn-default" href={'/customers/edit/' + customer._id}> 
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

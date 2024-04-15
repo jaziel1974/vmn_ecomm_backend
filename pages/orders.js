@@ -1,17 +1,21 @@
+import { AppContext } from "@/components/Context";
 import Layout from "@/components/Layout";
 import axios from "axios";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 export default function OrdersPage() {
+    const {ordersToPrint, setOrdersToPrint} = useContext(AppContext);
+
     const [startDate, setStartDate] = useState(addDays(new Date(), -7));
     const [endDate, setEndDate] = useState(new Date());
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/orders?filterDateIni=' + startDate+'&filterDateEnd=' + endDate).then(response => {
+        axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate).then(response => {
             setOrders(response.data);
+            setOrdersToPrint(response.data);
         });
     }, [startDate, endDate]);
 
@@ -86,7 +90,7 @@ export default function OrdersPage() {
                         }}
                     />
                 </div>
-                <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrint" target="_blank" state={orders}>Print</Link>
+                <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrint">Print</Link>
             </div>
             <container className="grid-wrap">
                 <div>
@@ -135,7 +139,6 @@ export default function OrdersPage() {
                                             Edit
                                         </Link>
                                     </td>
-                                    <button type="button" className="btn-default" onClick={ev => fixOrder(order)}>Fix products</button>
                                 </tr>
                             ))}
                         </tbody>

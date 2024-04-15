@@ -33,9 +33,9 @@ export default function ProductForm(
     const router = useRouter();
 
     useEffect(() => {
-        axios.get('/api/categories').then(result => {
-            setCategories(result.data);
-        })
+            axios.get('/api/categories').then(result => {
+                setCategories(result.data);
+            })
     }, []);
 
     async function saveProduct(ev) {
@@ -127,7 +127,7 @@ export default function ProductForm(
 
     function addStock() {
         setStock(prev => {
-            return [...prev, { dateIni: '', dateEnd: '' }];
+            return [...prev, { dateIni: parseISO(new Date()), dateEnd: parseISO(new Date()) }];
         })
     }
 
@@ -141,9 +141,9 @@ export default function ProductForm(
 
     function handleStockDateIniChange(index, property, newName) {
         setStock(prev => {
-            const prices = [...prev];
-            prices[index].dateIni = newName;
-            return prices;
+            const stocks = [...prev];
+            stocks[index].dateIni = newName;
+            return stocks;
         });
     }
 
@@ -163,9 +163,9 @@ export default function ProductForm(
             </input>
             <label>Category</label>
             <select value={category} onChange={ev => setCategory(ev.target.value)}>
-                <option value="">Uncategorized</option>
+                <option value="" key="-1">Uncategorized</option>
                 {categories.length > 0 && categories.map(c => (
-                    <option value={c._id}>{c.name}</option>
+                    <option value={c._id} key={c._id}>{c.name}</option>
                 ))}
             </select>
 
@@ -223,7 +223,7 @@ export default function ProductForm(
                     className="btn-default text-sm mb-2">
                     Add new price
                 </button>
-                {pricePerZone.length > 0 && pricePerZone.map((price, index) => (
+                {pricePerZone && pricePerZone.length > 0 && pricePerZone.map((price, index) => (
                     <div className="flex gap-1 mb-2" key={index}>
                         <input type="text"
                             value={price.name}
@@ -252,10 +252,10 @@ export default function ProductForm(
                     className="btn-default text-sm mb-2">
                     Add new stock
                 </button>
-                {stock.length > 0 && stock.map((data, index) => (
+                {stock && stock.length > 0 && stock.map((data, index) => (
                     <div className="flex gap-1 mb-2" key={index}>
                         <DatePicker
-                            style={{ marginB    : '0' }}
+                            style={{ marginB: '0' }}
                             selected={parseISO(data.dateIni)}
                             onChange={(date) => {
                                 date.setHours(0, 0, 0, 0);

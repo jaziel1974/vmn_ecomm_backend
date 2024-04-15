@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 export default function OrdersPage() {
-    const [startDate, setStartDate] = useState(addDays(new Date(), -7));
+    const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
         if (startDate && endDate) {
-            axios.get('/api/orders?filterHorta=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '').then(response => {
+            axios.get('/api/products?filterStock=true&filterDateIni=' + startDate).then(response => {
                 setProducts(response.data);
                 console.log('orders', products);
             });
         }
     }, [startDate, endDate]);
-    
+
     function addDays(date, days) {
         var result = new Date(date);
         result.setDate(result.getDate() + days);

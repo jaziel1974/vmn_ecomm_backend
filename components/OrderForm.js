@@ -98,7 +98,7 @@ export default function OrderForm({
                             </td>
                             <td>
                                 <>
-                                    {l.unit_amount / 100}
+                                    {l.unit_amount}
                                 </>
                             </td>
                             <td>
@@ -119,7 +119,7 @@ export default function OrderForm({
                             </select>
                         </td>
                         <td>
-                            <input type="text" placeholder="Price" value="7.00" onChange={ev => setPrice(ev.target.value)}></input>
+                            <input type="text" placeholder="Price" onChange={ev => setPrice(ev.target.value)}></input>
                         </td>
                         <button type="button" className="btn-default" onClick={ev => addItem()}>Add</button>
                         <td>
