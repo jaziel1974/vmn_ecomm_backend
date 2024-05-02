@@ -18,7 +18,8 @@ const ProductSchema = new Schema({
             zone: { type: Number },
             price: { type: Number },
         },
-    }
+    },
+    stockAvailable: {type:Boolean},
 },
     {
         timestamps: true

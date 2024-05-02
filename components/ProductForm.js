@@ -17,6 +17,7 @@ export default function ProductForm(
         properties: assignedProperties,
         stock: existingStock,
         pricePerZone: existingPricePerZone,
+        stockAvailable: existingStockAvailable,
     }) {
     const [title, setTitle] = useState(existingTitle || '');
     const [description, setDescription] = useState(existingDescription || '');
@@ -29,18 +30,30 @@ export default function ProductForm(
     const [categories, setCategories] = useState([]);
     const [stock, setStock] = useState(existingStock || []);
     const [pricePerZone, setPricePerZone] = useState(existingPricePerZone || []);
+    const [stockAvailable, setStockAvailable] = useState(existingStockAvailable || false);
 
     const router = useRouter();
 
     useEffect(() => {
-            axios.get('/api/categories').then(result => {
-                setCategories(result.data);
-            })
+        axios.get('/api/categories').then(result => {
+            setCategories(result.data);
+        })
     }, []);
 
     async function saveProduct(ev) {
         ev.preventDefault();
-        const data = { title, description, price, images, category, properties: productProperties, stock, pricePerZone };
+        const data = {
+            title,
+            description,
+            price,
+            images,
+            category,
+            properties: productProperties,
+            stock,
+            pricePerZone,
+            stockAvailable,
+        };
+
         if (_id) {
             //update
             await axios.put('/api/products', { ...data, _id })
@@ -167,6 +180,11 @@ export default function ProductForm(
                 {categories.length > 0 && categories.map(c => (
                     <option value={c._id} key={c._id}>{c.name}</option>
                 ))}
+            </select>
+            <label>Available</label>
+            <select value={stockAvailable} onChange={ev => setStockAvailable(ev.target.value)}>
+                <option value={true}>Yes</option>
+                <option value={false}>No</option>
             </select>
 
             {propertiesToFill.length > 0 && propertiesToFill.map(p => (
