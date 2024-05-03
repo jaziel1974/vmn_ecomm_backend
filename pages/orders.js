@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 export default function OrdersPage() {
-    const {ordersToPrint, setOrdersToPrint} = useContext(AppContext);
+    const {setOrdersToPrint} = useContext(AppContext);
 
     const [startDate, setStartDate] = useState(addDays(new Date(), -7));
     const [endDate, setEndDate] = useState(new Date());

@@ -5,10 +5,11 @@ import { useState } from "react";
 
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
   const [ordersToPrint, setOrdersToPrint] = useState([]);
+  const [productsToPrint, setProductsToPrint] = useState([]);
 
   return (
     <SessionProvider session={session}>
-      <AppContext.Provider value={{ordersToPrint, setOrdersToPrint}}>
+      <AppContext.Provider value={{ordersToPrint, setOrdersToPrint, productsToPrint, setProductsToPrint}}>
         <Component {...pageProps} />
       </AppContext.Provider>
     </SessionProvider>

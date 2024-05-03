@@ -19,7 +19,7 @@ export default async function handle(req, res) {
         }
         else {
             res.json(await Product.find()
-                .sort({ title: 0 })
+                .sort({ 'stockAvailable': -1, title: 0 })
             )
         }
     }
