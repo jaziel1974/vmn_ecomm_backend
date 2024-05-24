@@ -7,9 +7,9 @@ import DatePicker from "react-datepicker";
 
 export default function OrdersPage() {
     const {setOrdersToPrint} = useContext(AppContext);
+    const {startDate, setStartDate} = useContext(AppContext);
+    const {endDate, setEndDate} = useContext(AppContext);
 
-    const [startDate, setStartDate] = useState(addDays(new Date(), -7));
-    const [endDate, setEndDate] = useState(new Date());
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -19,18 +19,11 @@ export default function OrdersPage() {
         });
     }, [startDate, endDate]);
 
-    function addDays(date, days) {
-        var result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    }
-
     function removeOrder(orderId) {
         axios.delete("/api/orders?_id=" + orderId)
             .then(result => {
-                setOrders((order) => {
-                    order.filter((i) => i._id !== orderId)
-                });
+                var filteredOrders = orders.filter((i) => i._id !== orderId);
+                setOrders(filteredOrders);
             });
     }
 
@@ -124,7 +117,7 @@ export default function OrdersPage() {
                                     <td>
                                         {order.line_items.map(l => (
                                             <>
-                                                {l.quantity} {l.name}<br></br>
+                                                {l.quantity} {l.name} {l.unit_amount}<br></br>
                                             </>
                                         ))}
                                         <Link className="btn-default" href={{

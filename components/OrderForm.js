@@ -5,14 +5,6 @@ import { useEffect, useState } from "react";
 export default function OrderForm({
     _id,
     line_items: existingLineItems,
-    email,
-    city,
-    postalCode,
-    streetAddress,
-    country,
-    paid,
-    createdAt,
-    updatedAt,
 }) {
 
     useEffect(() => {
@@ -63,6 +55,24 @@ export default function OrderForm({
     async function saveOrder(ev) {
         ev.preventDefault();
         const data = { lineItems };
+        //update
+        await axios.put('/api/orders', { ...data, _id })
+        setGoToOrders(true);
+    }
+
+    if (goToOrders) {
+        router.push('/orders');
+    }
+
+    async function fixOrder(ev) {
+        ev.preventDefault();
+
+        lineItems.map(l => (
+            l.unit_amount = l.unit_amount/100
+        ));
+
+        const data = { lineItems };
+
         //update
         await axios.put('/api/orders', { ...data, _id })
         setGoToOrders(true);
@@ -127,7 +137,8 @@ export default function OrderForm({
                     </tr>
                 </tbody>
             </table>
-            <button type="submit" className="btn-primary">Save</button>
+            <button type="submit" className="btn-primary mr-2">Save</button>
+            <button type="button" className="btn-primary" onClick={ev => fixOrder(ev)}>Fix</button>
         </form>
     )
 }

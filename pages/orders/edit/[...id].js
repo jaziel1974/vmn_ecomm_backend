@@ -13,8 +13,8 @@ export default function EditOrderPage() {
             return;
         }
         axios.get('/api/orders?orderEdit=true&id=' + id).then(response => {
+            console.log(response.data);
             setOrderInfo(response.data);
-
         });
     }, [id]);
 
@@ -22,6 +22,7 @@ export default function EditOrderPage() {
     return (
         <Layout>
             <h1>Edit order</h1>
+            <p>{orderInfo?.name} - {orderInfo?.email} - {orderInfo?.createdAt}</p>
             {orderInfo && (
                 <OrderForm {...orderInfo}/>
             )}

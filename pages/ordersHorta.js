@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 export default function OrdersPage() {
-    const [startDate, setStartDate] = useState(addDays(new Date(), -7));
+    const [startDate, setStartDate] = useState(addDays(new Date(), -2));
     const [endDate, setEndDate] = useState(new Date());
     const [products, setProducts] = useState([]);
 
