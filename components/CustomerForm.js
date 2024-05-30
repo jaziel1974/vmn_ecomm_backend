@@ -70,6 +70,7 @@ export default function CustomerForm(
             <input type="number" placeholder="price id"
                 value={priceId} onChange={ev => setPriceId(ev.target.value)}>
             </input>
+            <p>-1: São Paulo; 1: Embu-Guaçu; 2: Horta na Porta</p>
             <label>Email</label>
             <input type="text" placeholder="email"
                 value={email} onChange={ev => setEmail(ev.target.value)}>
