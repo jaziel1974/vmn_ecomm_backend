@@ -29,7 +29,7 @@ export default function OrderForm({
                 quantity: qtd,
                 currency: "USD",
                 name: product,
-                unit_amount: price
+                unit_amount: parseInt(price)
             }
 
             if (!lineItems.includes(newLine)) {
