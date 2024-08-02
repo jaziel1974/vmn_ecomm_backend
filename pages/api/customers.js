@@ -11,6 +11,10 @@ export default async function handle(req, res) {
         if (req.query?.id) {
             res.json(await Customer.findOne({ _id: req.query.id }));
         }
+        else if (req.query?.communicationLabels) {
+            const ids = JSON.parse(req.query.communicationLabels);
+            res.json(await Customer.find({communicationLabels: {$in: ids}}));
+        }
         else {
             res.json(await Customer.find())
         }

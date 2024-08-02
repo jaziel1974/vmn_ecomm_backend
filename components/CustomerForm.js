@@ -22,6 +22,7 @@ export default function CustomerForm(
             setCategories(result.data);
         })
     }, []);
+
     const [communicationLabels, setCommunicationLabels] = useState(assignedCommunicationLabels || []);
     const [name, setName] = useState(existingName || '');
     const [address, setAddress] = useState(existingAddress || '');
