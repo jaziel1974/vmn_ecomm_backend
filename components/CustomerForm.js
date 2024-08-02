@@ -11,7 +11,18 @@ export default function CustomerForm(
         addressNotes: existingAddressNotes,
         priceId: existingPriceId,
         email: existingEmail,
+        phone: existingPhone,
+        communicationLabels: assignedCommunicationLabels,
     }) {
+
+    const router = useRouter();
+
+    useEffect(() => {
+        axios.get('/api/categories/crm/listadistribuicao').then(result => {
+            setCategories(result.data);
+        })
+    }, []);
+    const [communicationLabels, setCommunicationLabels] = useState(assignedCommunicationLabels || []);
     const [name, setName] = useState(existingName || '');
     const [address, setAddress] = useState(existingAddress || '');
     const [addressExt, setAddressExt] = useState(existingAddressExt || '');
@@ -19,7 +30,8 @@ export default function CustomerForm(
     const [priceId, setPriceId] = useState(existingPriceId || 1);
     const [email, setEmail] = useState(existingEmail || "");
     const [goToCustomers, setGoToCustomers] = useState(false);
-    const router = useRouter();
+    const [phone, setPhone] = useState(existingPhone || "5511");
+    const [categories, setCategories] = useState([]);
 
     /*
     replace below code with price list
@@ -32,7 +44,8 @@ export default function CustomerForm(
 
     async function saveCustomer(ev) {
         ev.preventDefault();
-        const data = { name, address, addressExt, addressNotes, priceId, email };
+
+        const data = { name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels };
         if (_id) {
             //update
             await axios.put('/api/customers', { ...data, _id })
@@ -48,6 +61,15 @@ export default function CustomerForm(
         router.push('/customers');
     }
 
+    const handleCategoryCheck = (e) => {
+        const value = e.target.value;
+        if (e.target.checked) {
+            setCommunicationLabels([...communicationLabels, value]);
+        } else {
+            setCommunicationLabels(communicationLabels.filter(item => item !== value));
+        }
+    };
+
     return (
         <form onSubmit={saveCustomer}>
             <label>Customer name</label>
@@ -58,6 +80,26 @@ export default function CustomerForm(
             <input type="text" placeholder="address"
                 value={address} onChange={ev => setAddress(ev.target.value)}>
             </input>
+            <label>Phone Number</label>
+            <input type="text" placeholder="phone number"
+                value={phone} onChange={ev => setPhone(ev.target.value)}>
+            </input>
+            <label>Category</label>
+            <div className="flex">
+                {categories.length > 0 && categories.map((c, index) => (
+                    <>
+                        <input type="checkbox"
+                            id={c._id}
+                            key={c._id}
+                            value={c._id}
+                            checked={communicationLabels.find(item => item === c._id) != undefined}
+                            onChange={handleCategoryCheck}
+                            className="w-7 h-5"
+                        />
+                        <label htmlFor={`category-${index}`} className="ml-2 mr-2">{c.name}</label>
+                    </>
+                ))}
+            </div>
             <label>Address extension</label>
             <input type="text" placeholder="address extension"
                 value={addressExt} onChange={ev => setAddressExt(ev.target.value)}>

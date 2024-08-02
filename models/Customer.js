@@ -7,6 +7,8 @@ const CustomerSchema = new Schema({
     addressNotes: String,
     priceId: { type: Number, required: true },
     email: {type: String, required: true},
+    phone: String,
+    communicationLabels: { type: [mongoose.Types.ObjectId] },
 },
     {
         timestamps: true
