@@ -5,6 +5,7 @@ import Logo from "./Logo";
 
 export default function Layout({ children }) {
   const [showNav, setShowNav] = useState(false);
+  /*
   const { data: session } = useSession();
   if (!session) {
     return (
@@ -15,6 +16,7 @@ export default function Layout({ children }) {
       </div>
     )
   }
+    */
   return (
     <div className="bg-bgGray min-h-screen">
       <div className="block md:hidden flex p-4">
