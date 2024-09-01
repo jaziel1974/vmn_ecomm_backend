@@ -64,8 +64,8 @@ export default async function handler(req, res) {
                 {
                     $match: {
                         createdAt: {
-                            $gt: new Date(req.query.filterDateIni),
-                            $lt: new Date(req.query.filterDateEnd)
+                            $gte: new Date(req.query.filterDateIni),
+                            $lte: new Date(req.query.filterDateEnd)
                         }
                     }
                 },
