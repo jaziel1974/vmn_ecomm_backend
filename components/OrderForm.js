@@ -26,7 +26,7 @@ export default function OrderForm({
     function addItem() {
         if (qtd > 0 && product && price) {
             let newLine = {
-                quantity: qtd,
+                quantity: parseInt(qtd),
                 currency: "USD",
                 name: product,
                 unit_amount: parseInt(price)
