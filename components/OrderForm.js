@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 export default function OrderForm({
     _id,
     line_items: existingLineItems,
+    adminNotes: existingAdminNotes,
+    customerNotes: existingCustomerNotes
 }) {
 
     useEffect(() => {
@@ -15,6 +17,8 @@ export default function OrderForm({
 
     const [products, setProducts] = useState([]);
     const [lineItems, setLineItems] = useState(existingLineItems || []);
+    const [adminNotes, setAdminNotes] = useState(existingAdminNotes || "");
+    const [customerNotes, setCustomerNotes] = useState(existingCustomerNotes || "");
     const [goToOrders, setGoToOrders] = useState(false);
 
     const [qtd, setQtd] = useState(0);
@@ -56,9 +60,14 @@ export default function OrderForm({
         ev.preventDefault();
         const data = { lineItems };
         //update
-        await axios.put('/api/orders', { ...data, _id })
+        await axios.put('/api/orders', { ...data, adminNotes, customerNotes, _id })
         setGoToOrders(true);
     }
+
+    function cancelChanges() {
+        setGoToOrders(true);
+    }
+
 
     if (goToOrders) {
         router.push('/orders');
@@ -68,7 +77,7 @@ export default function OrderForm({
         ev.preventDefault();
 
         lineItems.map(l => (
-            l.unit_amount = l.unit_amount/100
+            l.unit_amount = l.unit_amount / 100
         ));
 
         const data = { lineItems };
@@ -137,7 +146,10 @@ export default function OrderForm({
                     </tr>
                 </tbody>
             </table>
+            <textarea name="adminNotes" id="adminNotes" placeholder="Admin Notes" cols="30" rows="4" value={adminNotes} onChange={ev => setAdminNotes(ev.target.value)}></textarea>
+            <textarea name="customerNotes" id="customerNotes" placeholder="Customer Notes" cols="30" rows="4" value={customerNotes} onChange={ev => setCustomerNotes(ev.target.value)}></textarea>
             <button type="submit" className="btn-primary mr-2">Save</button>
+            <button type="button" className="btn-red mr-2" onClick={ev => cancelChanges()}>Cancel</button>
             <button type="button" className="btn-primary" onClick={ev => fixOrder(ev)}>Fix</button>
         </form>
     )

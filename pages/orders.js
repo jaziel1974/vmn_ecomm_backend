@@ -83,7 +83,8 @@ export default function OrdersPage() {
                         }}
                     />
                 </div>
-                <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrint">Print</Link>
+                <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrintCustomer">Print (Customer)</Link>
+                <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrintAdmin">Print (Admin)</Link>
             </div>
             <container className="grid-wrap">
                 <div>
@@ -123,7 +124,8 @@ export default function OrdersPage() {
                                         <Link className="btn-default" href={{
                                             pathname: '/orders/edit/' + order._id,
                                             query: {
-                                                "lineItems": order.line_items
+                                                "lineItems": order.line_items,
+                                                "adminNotes": order.adminNotes
                                             }
                                         }}>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

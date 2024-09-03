@@ -9,6 +9,8 @@ const OrderSchema = new Schema({
     streetAddress:String,
     country:String,
     paid:Boolean,
+    adminNotes:String,
+    customerNotes:String,
 }, {
     timestamps: true
 });

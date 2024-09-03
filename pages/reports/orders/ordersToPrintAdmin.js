@@ -36,9 +36,18 @@ export default function OrdersToPrint() {
                         ))}
                     </div>
                     <hr style={{ height: '5px', color: 'black' }} />
-                    <div style={{ float: 'right', paddingBottom: '30px' }}>
-                    Total: <b>{useTotalCost()}</b>
+                    <div style={{ paddingBottom: '30px' }}>
+                        Total: <b>{useTotalCost()}</b>
                     </div>
+                    {order.customerNotes &&
+                        <div>
+                            <hr style={{ height: '5px', color: 'black' }} />
+                            <b>Notas:</b>
+                            <textarea style={{ border: 0, enabled: false }}>{order.customerNotes}</textarea>
+                            <textarea style={{ border: 0, enabled: false }}>{order.adminNotes}</textarea>
+                            <hr style={{ height: '5px', color: 'black' }} />
+                        </div>
+                    }
                 </div>
             ))}
         </container>

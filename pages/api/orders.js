@@ -16,7 +16,9 @@ export default async function handler(req, res) {
     }
     else if (req.method == 'PUT') {
         res.json(await Order.findByIdAndUpdate(req.body._id, {
-            line_items: req.body.lineItems
+            line_items: req.body.lineItems,
+            adminNotes: req.body.adminNotes,
+            customerNotes: req.body.customerNotes,
         }));
     } else if (req.method == 'DELETE') {
         const { _id } = req.query;

@@ -18,6 +18,7 @@ export default function ProductForm(
         stock: existingStock,
         pricePerZone: existingPricePerZone,
         stockAvailable: existingStockAvailable,
+        cost: existingCost
     }) {
     const [title, setTitle] = useState(existingTitle || '');
     const [description, setDescription] = useState(existingDescription || '');
@@ -31,6 +32,7 @@ export default function ProductForm(
     const [stock, setStock] = useState(existingStock || []);
     const [pricePerZone, setPricePerZone] = useState(existingPricePerZone || []);
     const [stockAvailable, setStockAvailable] = useState(existingStockAvailable || false);
+    const [cost, setCost] = useState(existingCost || 0);
 
     const router = useRouter();
 
@@ -52,6 +54,7 @@ export default function ProductForm(
             stock,
             pricePerZone,
             stockAvailable,
+            cost
         };
 
         if (_id) {
@@ -231,6 +234,10 @@ export default function ProductForm(
             <label>Price</label>
             <input type="number" placeholder="price"
                 value={price} onChange={ev => setPrice(ev.target.value)}>
+            </input>
+            <label>Cost</label>
+            <input type="number" placeholder="price"
+                value={cost} onChange={ev => setCost(ev.target.value)}>
             </input>
 
             <div className="mb-2">

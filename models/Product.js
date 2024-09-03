@@ -20,6 +20,7 @@ const ProductSchema = new Schema({
         },
     },
     stockAvailable: {type:Boolean},
+    cost: {type:Number},
 },
     {
         timestamps: true
