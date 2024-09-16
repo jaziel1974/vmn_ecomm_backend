@@ -2,14 +2,10 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function CustomerForm(
+export default function CrmCustomerForm(
     {
         _id,
         name: existingName,
-        address: existingAddress,
-        addressExt: existingAddressExt,
-        addressNotes: existingAddressNotes,
-        priceId: existingPriceId,
         email: existingEmail,
         phone: existingPhone,
         communicationLabels: assignedCommunicationLabels,
@@ -25,42 +21,33 @@ export default function CustomerForm(
 
     const [communicationLabels, setCommunicationLabels] = useState(assignedCommunicationLabels || []);
     const [name, setName] = useState(existingName || '');
-    const [address, setAddress] = useState(existingAddress || '');
-    const [addressExt, setAddressExt] = useState(existingAddressExt || '');
-    const [addressNotes, setAddressNotes] = useState(existingAddressNotes || '');
-    const [priceId, setPriceId] = useState(existingPriceId || 1);
     const [email, setEmail] = useState(existingEmail || "");
-    const [goToCustomers, setGoToCustomers] = useState(false);
+    const [goToCrmCustomers, setGoToCrmCustomers] = useState(false);
     const [phone, setPhone] = useState(existingPhone || "5511");
     const [categories, setCategories] = useState([]);
 
-    /*
-    replace below code with price list
-    useEffect(() => {
-        axios.get('/api/categories').then(result => {
-            setCategories(result.data);
-        })
-    }, []);
-    */
+    async function saveCrmCustomer(ev) {
+        if (!name || name.trim() === '' || !email || email.trim() === '' || !phone || phone.trim() === '') {
+            alert('The name, email and phone are required');
+            return;
+        }
 
-    async function saveCustomer(ev) {
         ev.preventDefault();
 
-        const data = { name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels };
+        const data = { name, email, phone, communicationLabels };
         if (_id) {
             //update
-            await axios.put('/api/customers', { ...data, _id })
+            await axios.put('/api/crm/crm', { ...data, _id })
         }
         else {
             //create
-            await axios.post('/api/customers', data);
-            await axios.post('/api/crm/crm', { name, email, phone, communicationLabels });
+            await axios.post('/api/crm/crm', data);
         }
-        setGoToCustomers(true);
+        setGoToCrmCustomers(true);
     }
 
-    if (goToCustomers) {
-        router.push('/customers');
+    if (goToCrmCustomers) {
+        router.push('/crmcustomers');
     }
 
     const handleCategoryCheck = (e) => {
@@ -73,14 +60,10 @@ export default function CustomerForm(
     };
 
     return (
-        <form onSubmit={saveCustomer}>
+        <form onSubmit={saveCrmCustomer}>
             <label>Customer name</label>
             <input type="text" placeholder="customer name"
                 value={name} onChange={ev => setName(ev.target.value)}>
-            </input>
-            <label>Address</label>
-            <input type="text" placeholder="address"
-                value={address} onChange={ev => setAddress(ev.target.value)}>
             </input>
             <label>Phone Number</label>
             <input type="text" placeholder="phone number"
@@ -102,19 +85,6 @@ export default function CustomerForm(
                     </>
                 ))}
             </div>
-            <label>Address extension</label>
-            <input type="text" placeholder="address extension"
-                value={addressExt} onChange={ev => setAddressExt(ev.target.value)}>
-            </input>
-            <label>Address notes</label>
-            <textarea placeholder="address notes"
-                value={addressNotes} onChange={ev => setAddressNotes(ev.target.value)}>
-            </textarea>
-            <label>Price id</label>
-            <input type="number" placeholder="price id"
-                value={priceId} onChange={ev => setPriceId(ev.target.value)}>
-            </input>
-            <p>-1: São Paulo; 1: Embu-Guaçu; 2: Horta na Porta; 3: Atacado</p>
             <label>Email</label>
             <input type="text" placeholder="email"
                 value={email} onChange={ev => setEmail(ev.target.value)}>
