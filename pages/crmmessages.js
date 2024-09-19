@@ -9,6 +9,7 @@ export default function CRMPage() {
     const [messageList, setMessageList] = useState([]);
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         axios.get('/api/categories/crm/listadistribuicao').then(result => {
@@ -17,9 +18,15 @@ export default function CRMPage() {
     }, []);
 
     useEffect(() => {
-        axios.get('/api/crm/crm?communicationLabels=' + JSON.stringify(communicationLabels)).then(result => {
-            setCrms(result.data);
-        })
+        if (communicationLabels.length > 0) {
+            axios.get('/api/crm/crm?communicationLabels=' + JSON.stringify(communicationLabels)).then(result => {
+                setCrms(result.data);
+            })
+        } else {
+            axios.get('/api/crm/crm').then(result => {
+                setCrms(result.data);
+            })
+        }
     }, [communicationLabels]);
 
     const handleCategoryCheck = (e) => {
@@ -45,7 +52,7 @@ export default function CRMPage() {
     };
 
     const sendMessage = async () => {
-
+        setErrors([]);
         let token = null;
 
         token = await axios.get('/api/crm/whatsapptoken');
@@ -57,7 +64,7 @@ export default function CRMPage() {
             return;
         }
 
-        for(let i = 0; i < messageList.length; i++) {
+        for (let i = 0; i < messageList.length; i++) {
             let customer = messageList[i];
             let customMessage = message.replace('${name}', customer.name);
 
@@ -66,10 +73,17 @@ export default function CRMPage() {
                 customer: customer,
                 token: token.data
             }
-            await axios.post('/api/crm/whatsapp', data);
+            await axios.post('/api/crm/whatsapp', data)
+                .catch(error => {
+                    console.log("error", error);
+                    setErrors([...errors, {
+                        message: error.message,
+                        customer: customer
+                    }]);
+                })
         }
 
-        alert("Mensagens enviadas com sucesso!");
+        alert("Envio de mensagens concluído!");
     }
 
     return (
@@ -139,6 +153,20 @@ export default function CRMPage() {
             <div style={{ position: 'sticky', bottom: '10px', marginTop: '10px' }}>
                 {isLoading && <span>"wait... processing..."</span>}
             </div>
+
+            {errors &&
+                <div className="flex mt-2 ml-4">
+                    <table className="basic mt-2 mr-2">
+                        <tbody>
+                            {errors.map((error, index) => (
+                                <tr key={index}>
+                                    <td>{error.customer.name + ": " + error.message}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            }
         </Layout >
     )
 }
