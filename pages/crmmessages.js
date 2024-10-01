@@ -43,6 +43,14 @@ export default function CRMPage() {
         setCrms(crms.filter(c => c.name.toLowerCase().includes(value)));
     };
 
+    const selectAll = () => {
+        setMessageList(crms);
+    };
+
+    const selectNone = () => {
+        setMessageList([]);
+    };
+
     const sendMessageConfirmation = async () => {
         if (confirm("Confirme para enviar a mensagem!")) {
             setIsLoading(true);
@@ -113,6 +121,8 @@ export default function CRMPage() {
                         </div>
                         <label>Filter by name</label>
                         <input type="text" onChange={handleNameFilter} className="h-8 mt-2 ml-4" />
+                        <button className="btn-primary mt-2 ml-4" onClick={selectAll}>Select All</button>
+                        <button className="btn-red mt-2 ml-4" onClick={selectNone}>Remove All</button>
                         <div className="flex mt-2 ml-4">
                             <table className="basic mt-2 mr-2">
                                 <thead>

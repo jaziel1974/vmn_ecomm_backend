@@ -1,15 +1,13 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
+import {getStorage} from 'firebase/storage'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDIeloz-QinQptGieCdIc2cWSn0t-G_Fn4",
-  authDomain: "react-ecommerce-a479e.firebaseapp.com",
-  projectId: "react-ecommerce-a479e",
-  storageBucket: "react-ecommerce-a479e.appspot.com",
-  messagingSenderId: "292442078664",
-  appId: "1:292442078664:web:8b8376200f4af18f0894fd",
-  measurementId: "G-9GV9BT4GR2"
+  apiKey: "AIzaSyBgP79iYiHNtgPJtMjv_la_yFU4D7A1dH8",
+  authDomain: "loja-verdemusgonatural.firebaseapp.com",
+  projectId: "loja-verdemusgonatural",
+  storageBucket: "loja-verdemusgonatural.appspot.com",
+  messagingSenderId: "350990544506",
+  appId: "1:350990544506:web:9fffbbe8b7df9b19cd55c3"
 };
 
 // Initialize Firebase
