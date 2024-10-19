@@ -28,7 +28,12 @@ export default function Customers() {
                     {customers.map(customer => (
                         <tr key={customer._id}>
                             <td>{customer.name}</td>
-                            <td>{customer.address}</td>
+                            <td>
+                                {customer.address}
+                                <Link className="btn-red" href={'https://waze.com/ul?q=' + customer.address}>
+                                    Open Waze
+                                </Link>
+                            </td>
                             <td>{customer.email}</td>
                             <td>{customer.priceId}</td>
                             <td>

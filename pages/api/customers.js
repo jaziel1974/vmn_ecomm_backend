@@ -16,7 +16,7 @@ export default async function handle(req, res) {
             res.json(await Customer.find({communicationLabels: {$in: ids}}));
         }
         else {
-            res.json(await Customer.find())
+            res.json(await Customer.find().sort({ name: 1 }));
         }
     }
 
