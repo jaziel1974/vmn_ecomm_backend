@@ -33,6 +33,10 @@ export default function Customers() {
                                 <Link className="btn-red" href={'https://waze.com/ul?q=' + customer.address}>
                                     Open Waze
                                 </Link>
+
+                                <Link className="btn-red" href={'https://www.google.com/maps/search/?api=1&query=' + customer.address}>
+                                    Open Maps
+                                </Link>
                             </td>
                             <td>{customer.email}</td>
                             <td>{customer.priceId}</td>
