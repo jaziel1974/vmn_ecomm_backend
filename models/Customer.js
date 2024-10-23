@@ -9,6 +9,7 @@ const CustomerSchema = new Schema({
     email: {type: String, required: true},
     phone: String,
     communicationLabels: { type: [mongoose.Types.ObjectId] },
+    shippingType: {type: String, default: 'none'},
 },
     {
         timestamps: true

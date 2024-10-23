@@ -13,6 +13,7 @@ export default function CustomerForm(
         email: existingEmail,
         phone: existingPhone,
         communicationLabels: assignedCommunicationLabels,
+        shippingType: existingShippingType,
     }) {
 
     const router = useRouter();
@@ -33,6 +34,7 @@ export default function CustomerForm(
     const [goToCustomers, setGoToCustomers] = useState(false);
     const [phone, setPhone] = useState(existingPhone || "5511");
     const [categories, setCategories] = useState([]);
+    const [shippingType, setShippingType] = useState(existingShippingType || 'none');
 
     /*
     replace below code with price list
@@ -46,7 +48,7 @@ export default function CustomerForm(
     async function saveCustomer(ev) {
         ev.preventDefault();
 
-        const data = { name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels };
+        const data = { name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels, shippingType };
         if (_id) {
             //update
             await axios.put('/api/customers', { ...data, _id })
@@ -54,7 +56,7 @@ export default function CustomerForm(
         else {
             //create
             await axios.post('/api/customers', data);
-            await axios.post('/api/crm/crm', { name, email, phone, communicationLabels });
+            await axios.post('/api/crm/crm', { name, email, phone, communicationLabels, shippingType });
         }
         setGoToCustomers(true);
     }
@@ -119,6 +121,11 @@ export default function CustomerForm(
             <input type="text" placeholder="email"
                 value={email} onChange={ev => setEmail(ev.target.value)}>
             </input>
+            <label>Shipping Type</label>
+            <input type="text" placeholder="shipping type"
+                value={shippingType} onChange={ev => setShippingType(ev.target.value)}>
+            </input>
+            <p>none; 4itens; 100; 200</p>
             <button type="submit" className="btn-primary">Save</button>
         </form >
     )
