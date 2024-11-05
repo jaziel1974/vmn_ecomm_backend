@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import axios from "axios";
+import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 
 export default function CRMPage() {
@@ -54,17 +55,16 @@ export default function CRMPage() {
     const sendMessageConfirmation = async () => {
         if (confirm("Confirme para enviar a mensagem!")) {
             setIsLoading(true);
-            await sendMessage();
+            await sendCRMMessage();
             setIsLoading(false);
         }
     };
 
-    const sendMessage = async () => {
+    const sendCRMMessage = async () => {
         setErrors([]);
         let token = null;
 
         token = await axios.get('/api/crm/whatsapptoken');
-        console.log("token", token);
 
         if (!token) {
             setIsLoading(false);
@@ -94,6 +94,88 @@ export default function CRMPage() {
         alert("Envio de mensagens concluído!");
     }
 
+    const sendReceipt = async () => {
+        setErrors([]);
+        let token = null;
+        token = await axios.get('/api/crm/whatsapptoken');
+        if (!token) {
+            setIsLoading(false);
+            alert("Token inválido!");
+            return;
+        }
+
+        let startDate = '2024-10-30';
+        let endDate = '2024-11-04';
+
+        let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '');
+        
+        if (!confirm("Do you want to send " + orders.data.length + " receipts?")) {
+            return;
+        }
+        
+        setIsLoading(true);
+        let textReceipt = await axios.get('/api/crm/crmtext?name=ReciboCompra');
+
+        orders.data.map(async order => {
+            //let order = orders.data[5];
+            let messageReceipt = textReceipt.data.text;
+            let receipt = createReceipt(order);
+            let customer = order.Customers[0];
+            messageReceipt = messageReceipt.replace('${name}', customer.name);
+            messageReceipt = messageReceipt.replace('${date}', format(parseISO(order.createdAt), "dd/MM/yyyy"));
+            messageReceipt = messageReceipt.replace('${receipt}', receipt);
+
+            let data = {
+                message: messageReceipt,
+                customer: customer,
+                token: token.data
+            }
+
+            await axios.post('/api/crm/whatsapp', data)
+                .catch(error => {
+                    console.log("error", error);
+                    setErrors([...errors, {
+                        message: error.message,
+                        customer: customer
+                    }]);
+                })
+        })
+        alert("Envio de recibos concluído!");
+        setIsLoading(false);
+    }
+
+    const createReceipt = (order) => {
+        let totalCost = 0;
+        let description = "";
+        let report =
+            "Nome: " + order.Customers[0]?.name + "\n" +
+            "Endereço: " + order.Customers[0]?.address + " " + order.Customers[0]?.addressExt + "\n\n";
+
+        order.line_items.map(l => (
+            totalCost += l.unit_amount,
+            description = ("`" + l.quantity + " " + l.name).substring(0, 20),
+            report += description + fillWithSpaces(25 - description.length),
+            report += " R$ " + l.unit_amount + "`\n"
+        ))
+        report += "`Total: R$ " + totalCost + "`";
+
+        if (order.customerNotes) {
+            report += "\nNotas: " + order.customerNotes;
+        }
+
+        report += "\npix para verdemusgonatural@gmail.com"
+
+        return report;
+    }
+
+    const fillWithSpaces = (length) => {
+        let result = "";
+        for (let i = 0; i < length; i++) {
+            result += " ";
+        }
+        return result;
+    }
+
     return (
         <Layout>
             <h1>CRM</h1>
@@ -102,7 +184,7 @@ export default function CRMPage() {
                 <textarea className="h-32 mt-2 ml-4" style={{ width: '99%' }} placeholder="Message" onChange={e => setMessage(e.target.value)}></textarea>
 
                 <container className="grid-wrap" style={{ width: '99%' }}>
-                    <div>
+                    <div style={{ maxWidth: '600px' }}>
                         <label>Labels</label>
                         <div className="flex mt-2 ml-4">
                             {categories.length > 0 && categories.map((c, index) => (
@@ -123,6 +205,7 @@ export default function CRMPage() {
                         <input type="text" onChange={handleNameFilter} className="h-8 mt-2 ml-4" />
                         <button className="btn-primary mt-2 ml-4" onClick={selectAll}>Select All</button>
                         <button className="btn-red mt-2 ml-4" onClick={selectNone}>Remove All</button>
+                        <button className="btn-primary mt-2 ml-4" onClick={ev => sendReceipt()}>Send Receipt</button>
                         <div className="flex mt-2 ml-4">
                             <table className="basic mt-2 mr-2">
                                 <thead>

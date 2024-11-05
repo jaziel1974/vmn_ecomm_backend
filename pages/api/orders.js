@@ -72,7 +72,7 @@ export default async function handler(req, res) {
                     }
                 },
                 //get only line_items
-                {$unwind: {path: "$line_items"}},
+                { $unwind: { path: "$line_items" } },
                 {
                     $group: {
                         "_id": "$line_items.name",
