@@ -19,22 +19,19 @@ export default async function handle(req, res) {
             res.json(await Customer.find().sort({ name: 1 }));
         }
     }
-
-    if (method === 'POST') {
+    else if (method === 'POST') {
         const { name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels, shippingType } = req.body;
         const customerDoc = await Customer.create({
             name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels, shippingType
         });
         res.json(customerDoc);
     }
-
-    if (method === 'PUT') {
+    else if (method === 'PUT') {
         const {name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels, shippingType, _id} = req.body;
         await Customer.updateOne({_id}, {name, address, addressExt, addressNotes, priceId, email, phone, communicationLabels, shippingType});
         res.json(true);
     }
-
-    if(method === 'DELETE'){
+    else if(method === 'DELETE'){
         if (req.query?.id) {
             await Customer.deleteOne({_id:req.query?.id});
             res.json(true);

@@ -75,6 +75,7 @@ export default function CRMPage() {
         for (let i = 0; i < messageList.length; i++) {
             let customer = messageList[i];
             let customMessage = message.replace('${name}', customer.name);
+            customMessage = customMessage.replace('${email}', customer.email);
 
             let data = {
                 message: customMessage,
@@ -104,20 +105,19 @@ export default function CRMPage() {
             return;
         }
 
-        let startDate = '2024-10-30';
-        let endDate = '2024-11-04';
+        let startDate = '2024-11-13';
+        let endDate = '2024-11-20';
 
         let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '');
-        
+
         if (!confirm("Do you want to send " + orders.data.length + " receipts?")) {
             return;
         }
-        
+
         setIsLoading(true);
         let textReceipt = await axios.get('/api/crm/crmtext?name=ReciboCompra');
 
         orders.data.map(async order => {
-            //let order = orders.data[5];
             let messageReceipt = textReceipt.data.text;
             let receipt = createReceipt(order);
             let customer = order.Customers[0];
@@ -139,6 +139,8 @@ export default function CRMPage() {
                         customer: customer
                     }]);
                 })
+
+            //console.log('data', data);
         })
         alert("Envio de recibos concluído!");
         setIsLoading(false);
@@ -176,44 +178,81 @@ export default function CRMPage() {
         return result;
     }
 
+    /*
+    const sendImage = async () => {
+        setErrors([]);
+        let token = null;
+        token = await axios.get('/api/crm/whatsapptoken');
+        if (!token) {
+            setIsLoading(false);
+            alert("Token inválido!");
+            return;
+        }
+
+        if (!confirm("Do you want to send an image?")) {
+            return;
+        }
+        
+        setIsLoading(true);
+
+        let data = {
+            message: messageReceipt,
+            customer: customer,
+            token: token.data
+        }
+
+            await axios.post('/api/crm/whatsapp', data)
+                .catch(error => {
+                    console.log("error", error);
+                    setErrors([...errors, {
+                        message: error.message,
+                        customer: customer
+                    }]);
+                })
+        })
+        alert("Envio de recibos concluído!");
+        setIsLoading(false);
+    }
+        */
+
     return (
         <Layout>
-            <h1>CRM</h1>
-            <div style={{ border: '1px solid black', padding: '10px' }}>
+            <span className="text-2xl font-bold mb-4">CRM</span>
+            <button className="btn-primary mt-2 ml-4" onClick={ev => sendReceipt()}>Send Receipt</button>
+            <div className="mt-3 p-3" style={{ border: '1px solid black'}}>
                 <label>Message:</label>
                 <textarea className="h-32 mt-2 ml-4" style={{ width: '99%' }} placeholder="Message" onChange={e => setMessage(e.target.value)}></textarea>
 
                 <container className="grid-wrap" style={{ width: '99%' }}>
-                    <div style={{ maxWidth: '600px' }}>
+                    <div style={{ maxWidth: '98%' }}>
                         <label>Labels</label>
-                        <div className="flex mt-2 ml-4">
+                        <div className="flex mt-2 ml-4 flex-wrap">
                             {categories.length > 0 && categories.map((c, index) => (
-                                <>
+                                <div key={c._id}>
                                     <input type="checkbox"
                                         id={c._id}
-                                        key={c._id}
                                         value={c._id}
                                         checked={communicationLabels.find(item => item === c._id) != undefined}
                                         onChange={handleCategoryCheck}
-                                        className="w-7 h-5"
+                                        className="w-7 h-5 align-middle"
                                     />
-                                    <label htmlFor={`category-${index}`} className="ml-2 mr-2">{c.name}</label>
-                                </>
+                                    <label htmlFor={`category-${index}`} className="ml-2 mr-2 align-top">{c.name} |</label>
+                                </div>
                             ))}
                         </div>
                         <label>Filter by name</label>
                         <input type="text" onChange={handleNameFilter} className="h-8 mt-2 ml-4" />
                         <button className="btn-primary mt-2 ml-4" onClick={selectAll}>Select All</button>
                         <button className="btn-red mt-2 ml-4" onClick={selectNone}>Remove All</button>
-                        <button className="btn-primary mt-2 ml-4" onClick={ev => sendReceipt()}>Send Receipt</button>
-                        <div className="flex mt-2 ml-4">
+                        <button className="btn-primary mt-2 ml-4" onClick={ev => sendImage()}>Send Image</button>
+                        <div className="flex mt-2 ml-4 max-h-screen overflow-auto">
                             <table className="basic mt-2 mr-2">
                                 <thead>
                                     <tr>
                                         <td>CRM List</td>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody >
                                     {crms.map(crm => (
                                         <tr key={crm._id} onClick={() => setMessageList(messageList.concat(crm))}>
                                             <td>{crm.name}</td>
@@ -221,7 +260,7 @@ export default function CRMPage() {
                                     ))}
                                 </tbody>
                             </table>
-                            <table className="basic mt-2" style={{ height: 'fit-content' }}>
+                            <table className="basic mt-2 " style={{ height: 'fit-content' }}>
                                 <thead>
                                     <tr>
                                         <td>Message List</td>
@@ -239,8 +278,8 @@ export default function CRMPage() {
                     </div>
                 </container>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'sticky', bottom: '10px', marginTop: '10px' }}>
-                <button type="button" className="btn-primary ml-4" onClick={ev => sendMessageConfirmation()}>Enviar mensagem</button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'sticky', bottom: '10px', marginTop: '10px', marginRight: '10px' }}>
+                <button type="button" className="btn-primary ml-4 shadow-xl ring-1 sm:rounded-xl sm:px-10" onClick={ev => sendMessageConfirmation()}>Enviar mensagem</button>
             </div>
 
             <div style={{ position: 'sticky', bottom: '10px', marginTop: '10px' }}>
