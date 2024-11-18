@@ -24,10 +24,22 @@ export default function Products() {
         })
     }
 
+    const toogleStoreOpened = (ev) => {
+        axios.put('/api/storesettings', { id: 'store.opened' })
+            .then(response => {
+                if (response.data) {
+                    alert('Store is open');
+                } else {
+                    alert('Store is closed');
+                }
+            });
+    }
+
     return (
         <Layout>
             <Link className="btn-primary" href={'/products/new'}>Add new product</Link>
-            <Link className="btn-default text-sm mb-2 " href="./reports/products/productsToPrint">Generate product list</Link>
+            <Link className="btn-default text-sm mb-2 ml-2" href="./reports/products/productsToPrint">Generate product list</Link>
+            <Link className="btn-default text-sm mb-2 ml-2" href="#" onClick={(ev) => toogleStoreOpened(ev)}>Toogle Store Opened</Link>
             <table className="basic mt-2">
                 <thead>
                     <tr>
