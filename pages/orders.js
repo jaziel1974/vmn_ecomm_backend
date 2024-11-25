@@ -40,23 +40,17 @@ export default function OrdersPage() {
             })
     }
 
-    /*
-    */
-    function fixOrder(order) {
-        var items = [];
-        let item = {};
-
-        order.line_items.map(l => (
-            items.push({
-                "quantity": l.quantity, "name": l.price_data.product_data.name, "price": l.price_data.unit_amount
-            }
-            )
-        ))
-
-        axios.put("/api/orders?_id=" + order._id + "&normalization=true", items)
+    function deliver(orderId) {
+        axios.put("/api/orders?_id=" + orderId + "&deliver=" + true)
             .then(result => {
-                console.log("updated");
-            });
+                const alteredFilteredOrders = [...orders];
+
+                let order = alteredFilteredOrders.find(
+                    a => a._id === orderId
+                );
+                order.status = "delivered";
+                setOrders(alteredFilteredOrders);
+            })
     }
 
     return (
@@ -92,7 +86,7 @@ export default function OrdersPage() {
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                {<th>Paid</th>}
+                                {<th>Paid/Delivered</th>}
                                 <th>Recipient</th>
                                 <th>Products</th>
                             </tr>
@@ -104,11 +98,10 @@ export default function OrdersPage() {
                                         {new Date(order.createdAt).toLocaleString()}
                                         <button type="button" className="btn-default" onClick={ev => removeOrder(order._id)}>Remove</button>
                                     </td>
-                                    {
-                                        <td className={order.paid ? 'text-green-600' : 'text-red-600'}>
-                                            <button onClick={ev => pay(order._id, !order.paid)}>{order.paid ? 'YES' : 'NO'}</button>
-                                        </td>
-                                    }
+                                    <td className={order.paid ? 'text-green-600' : 'text-red-600'}>
+                                        <button type="button" className="btn-default"  onClick={ev => pay(order._id, !order.paid)}>{order.paid ? 'YES' : 'NO'}</button>
+                                        <button type="button" className="btn-default"  onClick={ev => deliver(order._id)} >{order?.status === 'delivered' ? 'Delivered' : "Press to deliver"}</button>
+                                    </td>
                                     <td>
                                         <b>{order.name}</b> {order.email} <br></br>
                                         {orders.city != null ?
@@ -118,7 +111,7 @@ export default function OrdersPage() {
                                     <td>
                                         {order.line_items.map(l => (
                                             <>
-                                                {l.quantity} {l.name} {l.unit_amount}<br></br>
+                                                <span id={l.name}>{l.quantity} {l.name} {l.unit_amount}</span><br></br>
                                             </>
                                         ))}
                                         <Link className="btn-default" href={{

@@ -11,6 +11,7 @@ const OrderSchema = new Schema({
     paid:Boolean,
     adminNotes:String,
     customerNotes:String,
+    status: String, //pending, processing, delivered
 }, {
     timestamps: true
 });

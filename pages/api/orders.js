@@ -9,6 +9,11 @@ export default async function handler(req, res) {
             paid: req.query.paid
         }));
     }
+    else if (req.method === 'PUT' && req.query.deliver) {
+        res.json(await Order.findByIdAndUpdate(req.query._id, {
+            status: "delivered"
+        }));
+    }
     else if (req.method == 'PUT' && req.query.normalization) {
         res.json(await Order.findByIdAndUpdate(req.query._id, {
             line_items: req.body

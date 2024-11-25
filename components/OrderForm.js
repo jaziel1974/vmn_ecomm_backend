@@ -73,24 +73,6 @@ export default function OrderForm({
         router.push('/orders');
     }
 
-    async function fixOrder(ev) {
-        ev.preventDefault();
-
-        lineItems.map(l => (
-            l.unit_amount = l.unit_amount / 100
-        ));
-
-        const data = { lineItems };
-
-        //update
-        await axios.put('/api/orders', { ...data, _id })
-        setGoToOrders(true);
-    }
-
-    if (goToOrders) {
-        router.push('/orders');
-    }
-
     return (
         <form onSubmit={saveOrder}>
             <table>
@@ -150,7 +132,6 @@ export default function OrderForm({
             <textarea name="customerNotes" id="customerNotes" placeholder="Customer Notes" cols="30" rows="4" value={customerNotes} onChange={ev => setCustomerNotes(ev.target.value)}></textarea>
             <button type="submit" className="btn-primary mr-2">Save</button>
             <button type="button" className="btn-red mr-2" onClick={ev => cancelChanges()}>Cancel</button>
-            <button type="button" className="btn-primary" onClick={ev => fixOrder(ev)}>Fix</button>
         </form>
     )
 }
