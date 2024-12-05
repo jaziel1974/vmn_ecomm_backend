@@ -39,7 +39,7 @@ export default function Customers() {
                                 </Link>
                             </td>
                             <td>{customer.email}</td>
-                            <td>{customer.priceId}</td>
+                            <td>{customer.priceId}/{customer.shippingType}</td>
                             <td>
                                 <Link className="btn-default" href={'/customers/edit/' + customer._id}> 
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
