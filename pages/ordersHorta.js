@@ -8,6 +8,8 @@ export default function OrdersPage() {
     const [endDate, setEndDate] = useState(new Date());
     const [products, setProducts] = useState([]);
 
+    const totalProducts = products.reduce((acc, p) => acc + p.qtde, 0);
+
     useEffect(() => {
         if (startDate && endDate) {
             axios.get('/api/orders?filterHorta=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '').then(response => {
@@ -47,17 +49,20 @@ export default function OrdersPage() {
 
             <h1>Products</h1>
             <table>
-                {products.length > 0 && products.map(l => (
-                    <tr>
-                        <td>
-                            {l.qtde}
-                        </td>
-                        <td>
-                            {l._id}
-                        </td>
-                    </tr>
-                ))}
+                {products.length > 0 && products.map(l => 
+                    (
+                        <tr key={l._id}>
+                            <td>
+                                {l.qtde}
+                            </td>
+                            <td>
+                                {l._id}
+                            </td>
+                        </tr>
+                    )
+                )}
             </table>
+            <span><b>Total: {totalProducts}</b></span>
         </Layout>
     )
 }

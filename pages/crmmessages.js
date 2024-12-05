@@ -105,8 +105,8 @@ export default function CRMPage() {
             return;
         }
 
-        let startDate = '2024-11-13';
-        let endDate = '2024-11-20';
+        let startDate = '2024-11-27';
+        let endDate = '2024-12-02';
 
         let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '');
 
