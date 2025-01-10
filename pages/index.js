@@ -1,13 +1,21 @@
 import Layout from "@/components/Layout";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+
   return <Layout>
-    <div className="text-blue-900 flex justify-between">
-      <h2>
-        Hello
-      </h2>
-      <div className="flex bg-gray-200 gap-1 text-black rounded-lg overflow-hidden">
-      </div>
+    <div>
+      <h1>NextAuth Google Login</h1>
+      {session ? (
+        <div>
+          <p>Welcome, {session.user.name}</p>
+          <img src={session.user.image} alt={session.user.name} style={{ borderRadius: "50%" }} />
+          <button onClick={() => signOut()}>Logout</button>
+        </div>
+      ) : (
+        <button onClick={() => signIn("google")}>Login with Google</button>
+      )}
     </div>
   </Layout>
 }

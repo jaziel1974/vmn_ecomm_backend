@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export default async function handle(req, res) {
+
     return new Promise((resolve, reject) => {
         const { method } = req;
 
@@ -8,7 +9,7 @@ export default async function handle(req, res) {
             let session = process.env.WHATS_CRM_SESSION;
             let host = process.env.WHATS_HOST;
 
-            const { customer, message, token, image } = req.body;
+            const { customer, message, token, file, fileName } = req.body;
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -16,15 +17,15 @@ export default async function handle(req, res) {
                 'Accept': '*/*'
             }
 
-            const data = {
+            const payload = {
                 phone: customer.phone,
                 isGroup: false,
-                isNewsletter: false,
-                caption: message,
-                filename: image
+                base64: `data:image/jpeg;base64,${file}`,
+                filename: fileName,
+                caption: message
             }
 
-            axios.post(host + '/api/' + session + '/send-image', data, { headers: headers })
+            axios.post(host + '/api/' + session + '/send-image', payload, { headers: headers })
                 .then(result => {
                     res.json(result.data);
                     resolve();
@@ -34,4 +35,12 @@ export default async function handle(req, res) {
                 });
         }
     });
+}
+
+export const config = {
+    api: { 
+        bodyParser: {
+            sizeLimit: '100mb'
+        } 
+    }
 }

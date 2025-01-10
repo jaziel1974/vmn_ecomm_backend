@@ -17,10 +17,10 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
   const [endDate, setEndDate] = useState(new Date());
 
   return (
-    //<SessionProvider session={session}>
+    <SessionProvider session={session}>
       <AppContext.Provider value={{ ordersToPrint, setOrdersToPrint, productsToPrint, setProductsToPrint, startDate, setStartDate, endDate, setEndDate }}>
         <Component {...pageProps} />
       </AppContext.Provider>
-    //</SessionProvider>
+    </SessionProvider>
   )
 }

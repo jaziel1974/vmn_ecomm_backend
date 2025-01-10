@@ -11,6 +11,7 @@ export default function CRMPage() {
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
         axios.get('/api/categories/crm/listadistribuicao').then(result => {
@@ -95,6 +96,114 @@ export default function CRMPage() {
         alert("Envio de mensagens concluído!");
     }
 
+    const sendImageMessage = async () => {
+        if (!selectedFile) {
+            alert("Selecione um arquivo!");
+            return;
+        }
+
+        let base64File = await readFileAsBase64(selectedFile);
+
+        setErrors([]);
+        let token = null;
+
+        token = await axios.get('/api/crm/whatsapptoken');
+
+        if (!token) {
+            setIsLoading(false);
+            alert("Token inválido!");
+            return;
+        }
+
+        for (let i = 0; i < messageList.length; i++) {
+            let customer = messageList[i];
+            let customMessage = message.replace('${name}', customer.name);
+            customMessage = customMessage.replace('${email}', customer.email);
+
+            let data = {
+                message: customMessage,
+                customer: customer,
+                token: token.data,
+                file: base64File,
+                fileName: "image.png"
+            }
+
+            await axios.post('/api/crm/whatsapp-send-image', data)
+                .catch(error => {
+                    console.log("error", error);
+                    setErrors([...errors, {
+                        message: error.message,
+                        customer: customer
+                    }]);
+                })
+        }
+
+        alert("Envio de mensagens concluído!");
+    }
+
+    const sendPdfMessage = async () => {
+        if (!selectedFile) {
+            alert("Selecione um arquivo!");
+            return;
+        }
+
+        let base64File = await readFileAsBase64(selectedFile);
+
+        setErrors([]);
+        let token = null;
+
+        token = await axios.get('/api/crm/whatsapptoken');
+
+        if (!token) {
+            setIsLoading(false);
+            alert("Token inválido!");
+            return;
+        }
+
+        for (let i = 0; i < messageList.length; i++) {
+            let customer = messageList[i];
+            let customMessage = message.replace('${name}', customer.name);
+            customMessage = customMessage.replace('${email}', customer.email);
+
+            let data = {
+                message: customMessage,
+                customer: customer,
+                token: token.data,
+                file: base64File
+            }
+
+            await axios.post('/api/crm/whatsapp-send-file', data)
+                .catch(error => {
+                    console.log("error", error);
+                    setErrors([...errors, {
+                        message: error.message,
+                        customer: customer
+                    }]);
+                })
+        }
+
+        alert("Envio de mensagens concluído!");
+    }
+
+    function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            // Triggered when the file is successfully read
+            reader.onload = () => {
+                resolve(reader.result.split(",")[1]); // Extract the Base64 content
+            };
+
+            // Triggered if there’s an error reading the file
+            reader.onerror = () => {
+                reject(new Error("Error reading file."));
+            };
+
+            // Read the file as a Base64 string
+            reader.readAsDataURL(file);
+        });
+    }
+
     const sendReceipt = async () => {
         setErrors([]);
         let token = null;
@@ -105,8 +214,8 @@ export default function CRMPage() {
             return;
         }
 
-        let startDate = '2024-11-27';
-        let endDate = '2024-12-02';
+        let startDate = '2024-12-04';
+        let endDate = '2024-12-11';
 
         let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '');
 
@@ -178,48 +287,16 @@ export default function CRMPage() {
         return result;
     }
 
-    /*
-    const sendImage = async () => {
-        setErrors([]);
-        let token = null;
-        token = await axios.get('/api/crm/whatsapptoken');
-        if (!token) {
-            setIsLoading(false);
-            alert("Token inválido!");
-            return;
-        }
-
-        if (!confirm("Do you want to send an image?")) {
-            return;
-        }
-        
-        setIsLoading(true);
-
-        let data = {
-            message: messageReceipt,
-            customer: customer,
-            token: token.data
-        }
-
-            await axios.post('/api/crm/whatsapp', data)
-                .catch(error => {
-                    console.log("error", error);
-                    setErrors([...errors, {
-                        message: error.message,
-                        customer: customer
-                    }]);
-                })
-        })
-        alert("Envio de recibos concluído!");
-        setIsLoading(false);
-    }
-        */
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+    };
 
     return (
         <Layout>
             <span className="text-2xl font-bold mb-4">CRM</span>
             <button className="btn-primary mt-2 ml-4" onClick={ev => sendReceipt()}>Send Receipt</button>
-            <div className="mt-3 p-3" style={{ border: '1px solid black'}}>
+            <div className="mt-3 p-3" style={{ border: '1px solid black' }}>
                 <label>Message:</label>
                 <textarea className="h-32 mt-2 ml-4" style={{ width: '99%' }} placeholder="Message" onChange={e => setMessage(e.target.value)}></textarea>
 
@@ -278,8 +355,13 @@ export default function CRMPage() {
                     </div>
                 </container>
             </div>
+            <div>
+                <h1>Upload a PDF</h1>
+                <input type="file" accept="application/*" onChange={handleFileChange} />
+            </div>
+
             <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'sticky', bottom: '10px', marginTop: '10px', marginRight: '10px' }}>
-                <button type="button" className="btn-primary ml-4 shadow-xl ring-1 sm:rounded-xl sm:px-10" onClick={ev => sendMessageConfirmation()}>Enviar mensagem</button>
+                <button type="button" className="btn-primary ml-4 shadow-xl ring-1 sm:rounded-xl sm:px-10" onClick={ev => sendImageMessage()}>Enviar xmas mensagem</button>
             </div>
 
             <div style={{ position: 'sticky', bottom: '10px', marginTop: '10px' }}>
