@@ -96,7 +96,6 @@ export default function OrdersPage() {
                                 <tr key={order._id}>
                                     <td>
                                         {new Date(order.createdAt).toLocaleString()}
-                                        <button type="button" className="btn-default" onClick={ev => removeOrder(order._id)}>Remove</button>
                                     </td>
                                     <td className={order.paid ? 'text-green-600' : 'text-red-600'}>
                                         <button type="button" className="btn-default"  onClick={ev => pay(order._id, !order.paid)}>{order.paid ? 'YES' : 'NO'}</button>
