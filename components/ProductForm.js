@@ -5,6 +5,10 @@ import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
 import DatePicker from "react-datepicker";
 import { parseISO } from "date-fns";
+import { storage } from '@/firebase';
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import mime from 'mime-types';
+import { readFileAsBase64 } from "@/utils/FileUtils";
 
 export default function ProductForm(
     {
@@ -76,13 +80,38 @@ export default function ProductForm(
         const files = ev.target?.files;
         if (files?.length > 0) {
             setIsUploading(true);
-            const data = new FormData();
+
+            const data = [];
+
             for (const file of files) {
-                data.append('file', file);
+                console.log("file: ", file);
+                data.push(file);
             }
-            const res = await axios.post('/api/upload', data);
+
+            const links = [];
+            data.forEach(async file => {
+                const base64File = await readFileAsBase64(file);
+                
+                const ext = file.name.split('.').pop();
+                const newFileName = Date.now() + '.' + ext;
+                const storageRef = ref(storage, 'files/productimages/' + newFileName);
+                const metadata = {
+                    contentType: 'image/' + ext
+                }
+
+                //write a code to upload the file to firebase storage
+                const uploadTask = await uploadBytesResumable(
+                    storageRef,
+                    base64File,
+                    metadata
+                );
+                
+                const downloadURL = await getDownloadURL(uploadTask.ref);
+                links.push(downloadURL);
+            })
+
             setImages(oldImages => {
-                return [...oldImages, ...res.data.links];
+                return [...oldImages, ...links];
             })
             setIsUploading(false);
         }

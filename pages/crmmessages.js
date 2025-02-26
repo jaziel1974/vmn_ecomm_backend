@@ -1,4 +1,5 @@
 import Layout from "@/components/Layout";
+import { readFileAsBase64 } from "@/utils/FileUtils";
 import axios from "axios";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
@@ -185,25 +186,6 @@ export default function CRMPage() {
         alert("Envio de mensagens concluído!");
     }
 
-    function readFileAsBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-
-            // Triggered when the file is successfully read
-            reader.onload = () => {
-                resolve(reader.result.split(",")[1]); // Extract the Base64 content
-            };
-
-            // Triggered if there’s an error reading the file
-            reader.onerror = () => {
-                reject(new Error("Error reading file."));
-            };
-
-            // Read the file as a Base64 string
-            reader.readAsDataURL(file);
-        });
-    }
-
     const sendReceipt = async () => {
         setErrors([]);
         let token = null;
@@ -214,8 +196,8 @@ export default function CRMPage() {
             return;
         }
 
-        let startDate = '2024-12-04';
-        let endDate = '2024-12-11';
+        let startDate = '2025-02-19';
+        let endDate = '2025-02-26';
 
         let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '');
 
@@ -356,8 +338,8 @@ export default function CRMPage() {
                 </container>
             </div>
             <div>
-                <h1>Upload a PDF</h1>
-                <input type="file" accept="application/*" onChange={handleFileChange} />
+                <h1>Upload a file</h1>
+                <input type="file" onChange={handleFileChange} />
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'sticky', bottom: '10px', marginTop: '10px', marginRight: '10px' }}>

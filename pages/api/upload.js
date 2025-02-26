@@ -11,36 +11,44 @@ export default async function handle(req, res) {
     await isAdminRequest(req, res);
     const form = new multiparty.Form();
 
-    const { fields, files } = await new Promise((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-            if (err) reject(err);
-            resolve({ fields, files });
+    try {
+        const { fields, files } = await new Promise((resolve, reject) => {
+            form.parse(req, (err, fields, files) => {
+                if (err) {
+                    console.error("Error parsing form:", err); 
+                    reject(err);
+                }
+                resolve({ fields, files });
+            });
         });
-    });
 
-    const links = [];
-    for (const file of files.file) {
-        const ext = file.originalFilename.split('.').pop();
-        const newFileName = Date.now() + '.' + ext;
-        const storageRef = ref(storage, 'files/productimages/' + newFileName);
-        const metadata = {
-            contentType: mime.lookup(file.path)
+        const links = [];
+        for (const file of files.file) {
+            const ext = file.originalFilename.split('.').pop();
+            const newFileName = Date.now() + '.' + ext;
+            const storageRef = ref(storage, 'files/productimages/' + newFileName);
+            const metadata = {
+                contentType: mime.lookup(file.path)
+            }
+            const uploadTask = await uploadBytesResumable(
+                storageRef,
+                fs.readFileSync(file.path).buffer,
+                metadata
+            );
+            const downloadURL = await getDownloadURL(uploadTask.ref);
+            links.push(downloadURL);
         }
-        const uploadTask = await uploadBytesResumable(
-            storageRef,
-            fs.readFileSync(file.path).buffer,
-            metadata
-        );
-        const downloadURL = await getDownloadURL(uploadTask.ref);
-        links.push(downloadURL);
+        return res.json({ links });
     }
-    return res.json({links});
+    catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
 }
 
 export const config = {
-    api: { 
-        bodyParser: {
-            sizeLimit: '10mb'
-        } 
+        api: {
+            bodyParser: {
+                sizeLimit: '10mb'
+            }
+        }
     }
-}
