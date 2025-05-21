@@ -94,6 +94,20 @@ export default function Nav({ show }) {
                     </svg>
                     CRM Texts
                 </Link>
+                <div className="relative group">
+                    <div className={inactiveLink + ' cursor-pointer flex items-center justify-between'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={pathname.includes('/reports') ? activeIcon : inactiveIcon}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5v9A1.5 1.5 0 004.5 18h15a1.5 1.5 0 001.5-1.5v-9A1.5 1.5 0 0019.5 6h-15A1.5 1.5 0 003 7.5z" />
+                        </svg>
+                        <span className="ml-2">Reports</span>
+                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                    <div className="hidden group-hover:block absolute left-0 mt-1 bg-white border rounded shadow z-10 min-w-[160px]">
+                        <Link href={'/reports/products/productsPerWeek'} className={pathname.includes('/reports/products/productsPerWeek') ? activeLink : inactiveLink + ' block px-4 py-2'}>
+                            Sells
+                        </Link>
+                    </div>
+                </div>
                 <button onClick={() => logout()} className={inactiveLink}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={inactiveIcon}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
