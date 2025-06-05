@@ -89,30 +89,34 @@ export default function ProductForm(
             }
 
             const links = [];
-            data.forEach(async file => {
-                const base64File = await readFileAsBase64(file);
-                
+            
+            for (const file of data) {
                 const ext = file.name.split('.').pop();
-                const newFileName = Date.now() + '.' + ext;
+                const newFileName = Date.now() + '_' + Math.random().toString(36).substring(7) + '.' + ext;
                 const storageRef = ref(storage, 'files/productimages/' + newFileName);
                 const metadata = {
-                    contentType: 'image/' + ext
+                    contentType: file.type || 'image/' + ext
                 }
 
-                //write a code to upload the file to firebase storage
-                const uploadTask = await uploadBytesResumable(
-                    storageRef,
-                    base64File,
-                    metadata
-                );
-                
-                const downloadURL = await getDownloadURL(uploadTask.ref);
-                links.push(downloadURL);
-            })
+                try {
+                    // Upload the file directly to Firebase Storage
+                    const uploadTask = await uploadBytesResumable(
+                        storageRef,
+                        file,
+                        metadata
+                    );
+                    
+                    const downloadURL = await getDownloadURL(uploadTask.ref);
+                    links.push(downloadURL);
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    alert('Error uploading file: ' + file.name);
+                }
+            }
 
             setImages(oldImages => {
                 return [...oldImages, ...links];
-            })
+            });
             setIsUploading(false);
         }
     }
