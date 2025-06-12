@@ -76,12 +76,17 @@ export default async function handler(req, res) {
                         }
                     }
                 },
-                //get only line_items
                 { $unwind: { path: "$line_items" } },
+                { $project: {
+                    name: "$line_items.name",
+                    quantity: "$line_items.quantity",
+                    price: "$line_items.price"
+                } },
                 {
                     $group: {
-                        "_id": "$line_items.name",
-                        "qtde": { $sum: "$line_items.quantity" },
+                        "_id": "$name",
+                        "qtde": { $sum: "$quantity" },
+                        "totalPrice": { $sum: "$price" }
                     }
                 },
                 {
