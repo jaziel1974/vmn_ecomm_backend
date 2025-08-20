@@ -1,0 +1,21 @@
+name: Trigger Org PR Report
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, closed]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call central reporting workflow
+        env:
+          GH_TOKEN: ${{ secrets.REPORTING_REPO_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/my-org/org-pr-report/dispatches \
+            -d '{"event_type":"update-report"}'
