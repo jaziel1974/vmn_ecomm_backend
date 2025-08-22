@@ -72,6 +72,7 @@ export default function ProductsPerWeek() {
             <tr>
               <td>Product Name</td>
               <td>Quantity Sold</td>
+              <td>Total Price</td>
             </tr>
           </thead>
           <tbody>
@@ -79,11 +80,17 @@ export default function ProductsPerWeek() {
               <tr key={idx}>
                 <td>{prod._id}</td>
                 <td>{prod.qtde}</td>
+                <td>
+                  {prod.totalPrice !== undefined && prod.totalPrice !== null
+                    ? prod.totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'BRL' })
+                    : '-'}
+                </td>
               </tr>
             ))}
             <tr className="font-bold border-t">
               <td>Total</td>
               <td>{products.reduce((sum, prod) => sum + prod.qtde, 0)}</td>
+              <td>{products.reduce((sum, prod) => sum + (prod.totalPrice || 0), 0).toLocaleString('en-US', { style: 'currency', currency: 'BRL' })}</td>
             </tr>
           </tbody>
         </table>
