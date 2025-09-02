@@ -32,29 +32,23 @@ export default async function handler(req, res) {
         if (req.query.orderEdit) {
             const data = await Order.findOne({ _id: req.query.id });
             res.json(data);
-        } /*else if (!req.query.filterDateIni) {
-            //const results = await Order.find().sort({ createdAt: -1 })
-            const results = await Order.aggregate([
-                {
-                    $lookup: {
-                        from: "customers",
-                        localField: "email",
-                        foreignField: "email",
-                        as: "Customers"
-                    }
+        } else if (req.query.filterOrder) {
+            // Build match object for date range
+            const match = {
+                createdAt: {
+                    $gt: new Date(req.query.filterDateIni),
+                    $lt: new Date(req.query.filterDateEnd)
                 }
-            ])
-            res.json(results);
-        }*/ else if (req.query.filterOrder) {
+            };
+            // Add customer filter if present
+            if (req.query.customer) {
+                match.$or = [
+                    { name: { $regex: req.query.customer, $options: 'i' } },
+                    { email: { $regex: req.query.customer, $options: 'i' } }
+                ];
+            }
             const results = await Order.aggregate([
-                {
-                    $match: {
-                        createdAt: {
-                            $gt: new Date(req.query.filterDateIni),
-                            $lt: new Date(req.query.filterDateEnd)
-                        }
-                    }
-                },
+                { $match: match },
                 {
                     $lookup: {
                         from: "customers",

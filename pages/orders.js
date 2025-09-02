@@ -11,13 +11,18 @@ export default function OrdersPage() {
     const {endDate, setEndDate} = useContext(AppContext);
 
     const [orders, setOrders] = useState([]);
+    const [customerFilter, setCustomerFilter] = useState("");
 
     useEffect(() => {
-        axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate).then(response => {
+        let url = '/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate;
+        if (customerFilter) {
+            url += '&customer=' + encodeURIComponent(customerFilter);
+        }
+        axios.get(url).then(response => {
             setOrders(response.data);
             setOrdersToPrint(response.data);
         });
-    }, [startDate, endDate]);
+    }, [startDate, endDate, customerFilter]);
 
     function removeOrder(orderId) {
         axios.delete("/api/orders?_id=" + orderId)
@@ -53,6 +58,9 @@ export default function OrdersPage() {
             })
     }
 
+    // Calculate grand total for all orders
+    const grandTotal = orders.reduce((sum, order) => sum + order.line_items.reduce((s, l) => s + (l.unit_amount), 0), 0);
+
     return (
         <Layout>
             <h1>Orders</h1>
@@ -75,6 +83,17 @@ export default function OrdersPage() {
                             date.setHours(0, 0, 0, 0);
                             setEndDate(date);
                         }}
+                    />
+                </div>
+                <div>
+                    &nbsp;Customer:&nbsp;
+                    <input
+                        type="text"
+                        placeholder="Name or Email"
+                        value={customerFilter}
+                        onChange={e => setCustomerFilter(e.target.value)}
+                        className="border border-gray-300 rounded px-2 py-1 text-sm"
+                        style={{ minWidth: '180px' }}
                     />
                 </div>
                 <Link className="btn-default text-sm mb-2" href="./reports/orders/ordersToPrintCustomer">Print (Customer)</Link>
@@ -112,7 +131,7 @@ export default function OrdersPage() {
                                                 }}>Remove</button>
                                             </td>
                                             <td style={{ width: '18%' }}>
-                                                <b>{order.name}</b> {order.email} <br></br>
+                                                <b>{order.Customers && order.Customers[0]?.name ? order.Customers[0].name : order.name}</b><br /> {order.email} <br />
                                                 {orders.city != null ?
                                                     order.city && order.postalCode && order.country : null}
                                                 {order.streetAddress}
@@ -147,6 +166,9 @@ export default function OrdersPage() {
                             })}
                         </tbody>
                     </table>
+                    <div style={{ textAlign: 'right', fontWeight: 'bold', marginTop: '1em', fontSize: '1.1em' }}>
+                        Grand Total: {grandTotal}
+                    </div>
                 </div>
             </container>
         </Layout>
