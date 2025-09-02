@@ -60,7 +60,7 @@ table.basic a{
     grid-gap: 0.5cm;
     grid-auto-flow: row;
 }
-.grid-wrap, grid-container-A4 {
+.grid-container-A4 {
     width: 22cm;
 }
 .flex-child-A4{
