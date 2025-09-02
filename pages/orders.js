@@ -104,6 +104,12 @@ export default function OrdersPage() {
                                             <td className={order.paid ? 'text-green-600' : 'text-red-600'}>
                                                 <button type="button" className="btn-default"  onClick={ev => pay(order._id, !order.paid)}>{order.paid ? 'YES' : 'NO'}</button>
                                                 <button type="button" className="btn-default"  onClick={ev => deliver(order._id)} >{order?.status === 'delivered' ? 'Delivered' : "Press to deliver"}</button>
+                                                <button type="button" className="btn-red" onClick={() => {
+                                                    const confirmation = window.prompt('Type REMOVER to confirm deletion of this order.');
+                                                    if (confirmation === 'REMOVER') {
+                                                        removeOrder(order._id);
+                                                    }
+                                                }}>Remove</button>
                                             </td>
                                             <td style={{ width: '18%' }}>
                                                 <b>{order.name}</b> {order.email} <br></br>
