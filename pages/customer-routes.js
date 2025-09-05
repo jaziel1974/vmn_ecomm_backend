@@ -66,10 +66,12 @@ export default function CustomerRoutesPage() {
             {loading && <div>Loading...</div>}
             <ul>
                 {customers.map((customer, idx) => (
-                    <li key={idx} className="mb-4 p-2 border rounded">
-                        <div><b>{customer.name}</b></div>
-                        <div>{customer.address}</div>
-                        <div className="flex gap-2 mt-2">
+                    <li key={idx} className="mb-4 p-2 border rounded flex items-center gap-4">
+                        <div>
+                            <b>{customer.name}</b><br />
+                            {customer.address}
+                        </div>
+                        <div className="flex gap-2 ml-auto">
                             <a
                                 className="btn-default"
                                 href={`https://waze.com/ul?q=${encodeURIComponent(customer.address)}`}
