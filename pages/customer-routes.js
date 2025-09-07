@@ -37,20 +37,53 @@ function getDefaultDateRange() {
     return [start, end];
 }
 
+function getOrderKey(startDate, endDate) {
+    return `customerOrder_${startDate.toISOString()}_${endDate.toISOString()}`;
+}
+
 export default function CustomerRoutesPage() {
     const [defaultStart, defaultEnd] = getDefaultDateRange();
     const [startDate, setStartDate] = useState(defaultStart);
     const [endDate, setEndDate] = useState(defaultEnd);
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [draggedIdx, setDraggedIdx] = useState(null);
 
     useEffect(() => {
         if (!startDate || !endDate) return;
         setLoading(true);
         axios.get(`/api/customer-routes?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`)
-            .then(res => setCustomers(res.data))
+            .then(res => {
+                let data = res.data;
+                const orderKey = getOrderKey(startDate, endDate);
+                const savedOrder = localStorage.getItem(orderKey);
+                if (savedOrder) {
+                    const orderArr = JSON.parse(savedOrder);
+                    data = orderArr.map(email => data.find(c => c.email === email)).filter(Boolean)
+                        .concat(data.filter(c => !orderArr.includes(c.email)));
+                }
+                setCustomers(data);
+            })
             .finally(() => setLoading(false));
     }, [startDate, endDate]);
+
+    function onDragStart(idx) {
+        setDraggedIdx(idx);
+    }
+    function onDragOver(e, idx) {
+        e.preventDefault();
+        if (draggedIdx === null || draggedIdx === idx) return;
+        const reordered = [...customers];
+        const [removed] = reordered.splice(draggedIdx, 1);
+        reordered.splice(idx, 0, removed);
+        setDraggedIdx(idx);
+        setCustomers(reordered);
+    }
+    function onDrop() {
+        setDraggedIdx(null);
+        const orderKey = getOrderKey(startDate, endDate);
+        localStorage.setItem(orderKey, JSON.stringify(customers.map(c => c.email)));
+    }
 
     return (
         <Layout>
@@ -66,10 +99,25 @@ export default function CustomerRoutesPage() {
             {loading && <div>Loading...</div>}
             <ul>
                 {customers.map((customer, idx) => (
-                    <li key={idx} className="mb-4 p-2 border rounded">
-                        <div><b>{customer.name}</b></div>
-                        <div>{customer.address}</div>
-                        <div className="flex gap-2 mt-2">
+                    <li
+                        key={idx}
+                        className={
+                            "mb-4 p-2 border rounded flex items-center gap-4" +
+                            (draggedIdx === idx ? " bg-gray-200" : "")
+                        }
+                        draggable
+                        onDragStart={() => onDragStart(idx)}
+                        onDragOver={e => onDragOver(e, idx)}
+                        onDrop={onDrop}
+                        onDragEnd={onDrop}
+                        style={{ cursor: 'move' }}
+                    >
+                        <span style={{ fontSize: 20, marginRight: 8 }}>☰</span>
+                        <div>
+                            <b>{customer.name} - {customer.email}</b><br />
+                            {customer.address}
+                        </div>
+                        <div className="flex gap-2 ml-auto">
                             <a
                                 className="btn-default"
                                 href={`https://waze.com/ul?q=${encodeURIComponent(customer.address)}`}
