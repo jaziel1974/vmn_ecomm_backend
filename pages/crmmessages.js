@@ -3,6 +3,7 @@ import { readFileAsBase64 } from "@/utils/FileUtils";
 import axios from "axios";
 import { format, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
 
 export default function CRMPage() {
     const [categories, setCategories] = useState([]);
@@ -13,6 +14,8 @@ export default function CRMPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     useEffect(() => {
         axios.get('/api/categories/crm/listadistribuicao').then(result => {
@@ -196,10 +199,7 @@ export default function CRMPage() {
             return;
         }
 
-        let startDate = '2025-08-27';
-        let endDate = '2025-09-02';
-
-        let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + startDate + '&filterDateEnd=' + endDate + '');
+        let orders = await axios.get('/api/orders?filterOrder=true&filterDateIni=' + format(startDate, 'yyyy-MM-dd') + '&filterDateEnd=' + format(endDate, 'yyyy-MM-dd') + '');
 
         if (!confirm("Do you want to send " + orders.data.length + " receipts?")) {
             return;
@@ -277,7 +277,27 @@ export default function CRMPage() {
     return (
         <Layout>
             <span className="text-2xl font-bold mb-4">CRM</span>
-            <button className="btn-primary mt-2 ml-4" onClick={ev => sendReceipt()}>Send Receipt</button>
+            <div className="mb-4 flex items-center gap-4">
+                <div className="flex items-center gap-2 ml-4">
+                    <label>From:</label>
+                    <DatePicker
+                        selected={startDate}
+                        onChange={date => setStartDate(date)}
+                        placeholderText="Start date"
+                        className="border px-2 py-1 rounded"
+                    />
+                    <label>To:</label>
+                    <DatePicker
+                        selected={endDate}
+                        onChange={date => setEndDate(date)}
+                        placeholderText="End date"
+                        className="border px-2 py-1 rounded"
+                    />
+                    <button className="btn-primary ml-4" style={{ height: '38px', marginTop: 0 }} onClick={ev => sendReceipt()}>
+                        Send Receipt
+                    </button>
+                </div>
+            </div>
             <div className="mt-3 p-3" style={{ border: '1px solid black' }}>
                 <label>Message:</label>
                 <textarea className="h-32 mt-2 ml-4" style={{ width: '99%' }} placeholder="Message" onChange={e => setMessage(e.target.value)}></textarea>
