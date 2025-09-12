@@ -324,35 +324,39 @@ export default function CRMPage() {
                         <button className="btn-primary mt-2 ml-4" onClick={selectAll}>Select All</button>
                         <button className="btn-red mt-2 ml-4" onClick={selectNone}>Remove All</button>
                         <button className="btn-primary mt-2 ml-4" onClick={ev => sendImage()}>Send Image</button>
-                        <div className="flex mt-2 ml-4 max-h-screen overflow-auto">
-                            <table className="basic mt-2 mr-2">
-                                <thead>
-                                    <tr>
-                                        <td>CRM List</td>
-                                    </tr>
-                                </thead>
-                                <tbody >
-                                    {crms.map(crm => (
-                                        <tr key={crm._id} onClick={() => setMessageList(messageList.concat(crm))}>
-                                            <td>{crm.name}</td>
+                        <div className="flex mt-2 ml-4" style={{ maxHeight: '60vh' }}>
+                            <div style={{ overflowY: 'auto', maxHeight: '60vh', minWidth: 180, width: '50%' }}>
+                                <table className="basic mt-2 mr-2">
+                                    <thead>
+                                        <tr>
+                                            <td>CRM List</td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <table className="basic mt-2 " style={{ height: 'fit-content' }}>
-                                <thead>
-                                    <tr>
-                                        <td>Message List</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {messageList.map(crm => (
-                                        <tr key={crm._id} onClick={() => setMessageList(messageList.filter(c => c._id !== crm._id))}>
-                                            <td>{crm.name}</td>
+                                    </thead>
+                                    <tbody>
+                                        {crms.map(crm => (
+                                            <tr key={crm._id} onClick={() => setMessageList(messageList.concat(crm))}>
+                                                <td>{crm.name}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style={{ overflowY: 'auto', maxHeight: '60vh', minWidth: 180, width: '50%' }}>
+                                <table className="basic mt-2" style={{ height: 'fit-content' }}>
+                                    <thead>
+                                        <tr>
+                                            <td>Message List</td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {messageList.map(crm => (
+                                            <tr key={crm._id} onClick={() => setMessageList(messageList.filter(c => c._id !== crm._id))}>
+                                                <td>{crm.name}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </container>
